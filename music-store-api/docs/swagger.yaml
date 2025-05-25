@@ -1,0 +1,195 @@
+definitions:
+  models.Album:
+    properties:
+      artist:
+        type: string
+      genre:
+        type: string
+      id:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      title:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /albums:
+    get:
+      consumes:
+      - application/json
+      description: Zwraca wszystkie albumy w sklepie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Album'
+            type: array
+      summary: Pobierz listę albumów
+      tags:
+      - albums
+    post:
+      consumes:
+      - application/json
+      description: Dodaje album do bazy danych
+      parameters:
+      - description: Album do dodania
+        in: body
+        name: album
+        required: true
+        schema:
+          $ref: '#/definitions/models.Album'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Album'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Dodaj nowy album
+      tags:
+      - albums
+  /albums/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Usuwa album na podstawie ID
+      parameters:
+      - description: ID albumu
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Usuń album
+      tags:
+      - albums
+    get:
+      consumes:
+      - application/json
+      description: Zwraca szczegóły albumu na podstawie ID
+      parameters:
+      - description: ID albumu
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Album'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz album po ID
+      tags:
+      - albums
+    patch:
+      consumes:
+      - application/json
+      description: Aktualizuje dane albumu na podstawie ID
+      parameters:
+      - description: ID albumu
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Zaktualizowane dane albumu
+        in: body
+        name: album
+        required: true
+        schema:
+          $ref: '#/definitions/models.Album'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Zaktualizuj album
+      tags:
+      - albums
+swagger: "2.0"
