@@ -21,6 +21,14 @@ func InitAlbumCollection() {
 	albumCollection = config.DB.Collection("albums")
 }
 
+// GetAlbums godoc
+// @Summary Pobierz listę albumów
+// @Description Zwraca wszystkie albumy w sklepie
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Success 200 {array} models.Album
+// @Router /albums [get]
 func GetAlbums(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -41,6 +49,17 @@ func GetAlbums(c *gin.Context) {
 	c.JSON(http.StatusOK, albums)
 }
 
+// GetAlbumByID godoc
+// @Summary Pobierz album po ID
+// @Description Zwraca szczegóły albumu na podstawie ID
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path string true "ID albumu"
+// @Success 200 {object} models.Album
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /albums/{id} [get]
 func GetAlbumByID(c *gin.Context) {
 	idParam := c.Param("id")
 
@@ -63,6 +82,18 @@ func GetAlbumByID(c *gin.Context) {
 	c.JSON(http.StatusOK, album)
 }
 
+// CreateAlbum godoc
+// @Summary Dodaj nowy album
+// @Description Dodaje album do bazy danych
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param album body models.Album true "Album do dodania"
+// @Success 201 {object} models.Album
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Security ApiKeyAuth
+// @Router /albums [post]
 func CreateAlbum(c *gin.Context) {
 	var album models.Album
 
@@ -85,6 +116,20 @@ func CreateAlbum(c *gin.Context) {
 	c.JSON(http.StatusCreated, album)
 }
 
+// UpdateAlbum godoc
+// @Summary Zaktualizuj album
+// @Description Aktualizuje dane albumu na podstawie ID
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path string true "ID albumu"
+// @Param album body models.Album true "Zaktualizowane dane albumu"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Security ApiKeyAuth
+// @Router /albums/{id} [patch]
 func UpdateAlbum(c *gin.Context) {
 	idParam := c.Param("id")
 	objID, err := primitive.ObjectIDFromHex(idParam)
@@ -125,6 +170,19 @@ func UpdateAlbum(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Album zaktualizowany"})
 }
 
+// DeleteAlbum godoc
+// @Summary Usuń album
+// @Description Usuwa album na podstawie ID
+// @Tags albums
+// @Accept json
+// @Produce json
+// @Param id path string true "ID albumu"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Security ApiKeyAuth
+// @Router /albums/{id} [delete]
 func DeleteAlbum(c *gin.Context) {
 	idParam := c.Param("id")
 	objID, err := primitive.ObjectIDFromHex(idParam)
