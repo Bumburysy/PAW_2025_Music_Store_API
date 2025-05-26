@@ -3,29 +3,31 @@
 Projekt REST API – Music Store (wersja podstawowa)
 
 ## ToDoList
-Dalsza rozbudowa do pełnego spełnienia wytycznych z poziomu I i II
+- Dalsza rozbudowa do pełnego spełnienia wytycznych z poziomu I i II
 
 ## 📚 Opis funkcjonalny i technologiczny
 
 ### 1. Przeznaczenie
 REST API dla sklepu muzycznego, umożliwiające:
-•	przeglądanie dostępnych albumów
-•	zarządzanie ofertą i stanami magazynowymi
+-	przeglądanie dostępnych albumów
+-	zarządzanie ofertą i stanami magazynowymi
 
 ### 2. Planowane Endpointy
 Albumy (CRUD)
-•	GET /albums – pobranie listy albumów
-•	GET /albums/{id} – pobranie szczegółów albumu
-•	POST /albums – dodanie nowego albumu
-•	PATCH /albums/{id} – edycja albumu
-•	DELETE /albums/{id} – usunięcie albumu
+-	GET /albums – pobranie listy albumów
+-	GET /albums/{id} – pobranie szczegółów albumu
+-	POST /albums – dodanie nowego albumu
+-	PATCH /albums/{id} – edycja albumu
+-	DELETE /albums/{id} – usunięcie albumu
 
 ### 3. Zakres funkcjonalny
-•	CRUD na kolekcji albumów w MongoDB (albums)
-•	Dokumentacja API w Swagger UI
+-	CRUD na kolekcji albumów w MongoDB (albums)
+-	Dokumentacja API w Swagger UI
 
 ### 4. Projekt bazy danych (MongoDB)
+
 Kolekcja albums:
+```json
 {
   "_id": ObjectId,
   "title": "Album Title",
@@ -34,9 +36,10 @@ Kolekcja albums:
   "price": 9.99,
   "quantity": 10
 }
+```
 
 ### 🚀 Technologie
-• Go
+- **Go**, **MongoDB**, **HTML5**, **CSS3**.
 
 ________________________________________
 
