@@ -13,6 +13,7 @@ import (
 func main() {
 	config.ConnectDB()
 	controllers.InitAlbumCollection()
+	controllers.InitUserCollection()
 
 	r := gin.Default()
 
@@ -28,8 +29,23 @@ func main() {
 		albumRoutes.GET("", controllers.GetAlbums)
 		albumRoutes.GET("/:id", controllers.GetAlbumByID)
 		albumRoutes.POST("", controllers.CreateAlbum)
+		albumRoutes.POST("/bulk", controllers.CreateAlbumsBulk)
 		albumRoutes.PATCH("/:id", controllers.UpdateAlbum)
 		albumRoutes.DELETE("/:id", controllers.DeleteAlbum)
+	}
+
+	userRoutes := r.Group("/users")
+	{
+		userRoutes.GET("", controllers.GetUsers)
+		userRoutes.GET("/:id", controllers.GetUserByID)
+		userRoutes.POST("", controllers.CreateUser)
+		userRoutes.PATCH("/:id", controllers.UpdateUser)
+		userRoutes.DELETE("/:id", controllers.DeleteUser)
+	}
+
+	dataRoutes := r.Group("/data")
+	{
+		dataRoutes.POST("/load", controllers.LoadTestData)
 	}
 
 	r.Run(":25565")
