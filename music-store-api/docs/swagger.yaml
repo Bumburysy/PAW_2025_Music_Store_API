@@ -3,15 +3,41 @@ definitions:
     properties:
       artist:
         type: string
+      cover_url:
+        type: string
+      created_at:
+        type: string
       genre:
         type: string
       id:
         type: string
       price:
         type: number
-      stock:
+      quantity:
         type: integer
       title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      last_name:
+        type: string
+      role:
+        description: '"employee", "customer", "admin"'
+        type: string
+      updated_at:
         type: string
     type: object
 info:
@@ -21,19 +47,48 @@ paths:
     get:
       consumes:
       - application/json
-      description: Zwraca wszystkie albumy w sklepie
+      description: Zwraca wszystkie albumy w sklepie z opcjonalnym filtrowaniem, sortowaniem
+        i paginacją
+      parameters:
+      - description: Numer strony (domyślnie 1)
+        in: query
+        name: page
+        type: integer
+      - description: Liczba wyników na stronę (domyślnie 10)
+        in: query
+        name: limit
+        type: integer
+      - description: Filtruj po wykonawcy (częściowa zgodność, bez wielkości liter)
+        in: query
+        name: artist
+        type: string
+      - description: Filtruj po gatunku muzycznym (częściowa zgodność, bez wielkości
+          liter)
+        in: query
+        name: genre
+        type: string
+      - description: Sortowanie po polach (np. price,-title)
+        in: query
+        name: sort
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: 'Struktura danych zawiera: page, limit, total i data (lista
+            albumów)'
           schema:
-            items:
-              $ref: '#/definitions/models.Album'
-            type: array
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: Pobierz listę albumów
       tags:
-      - albums
+      - Albums
     post:
       consumes:
       - application/json
@@ -68,7 +123,7 @@ paths:
       - ApiKeyAuth: []
       summary: Dodaj nowy album
       tags:
-      - albums
+      - Albums
   /albums/{id}:
     delete:
       consumes:
@@ -111,7 +166,7 @@ paths:
       - ApiKeyAuth: []
       summary: Usuń album
       tags:
-      - albums
+      - Albums
     get:
       consumes:
       - application/json
@@ -143,7 +198,7 @@ paths:
             type: object
       summary: Pobierz album po ID
       tags:
-      - albums
+      - Albums
     patch:
       consumes:
       - application/json
@@ -191,5 +246,213 @@ paths:
       - ApiKeyAuth: []
       summary: Zaktualizuj album
       tags:
-      - albums
+      - Albums
+  /albums/bulk:
+    post:
+      consumes:
+      - application/json
+      description: Dodaje wiele albumów do bazy danych w jednym żądaniu
+      parameters:
+      - description: Lista albumów do dodania
+        in: body
+        name: albums
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Album'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Informacja o dodanych albumach i ich liczbie
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Dodaj wiele albumów naraz
+      tags:
+      - Albums
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Zwraca wszystkich użytkowników w systemie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: Pobierz listę użytkowników
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Tworzy nowego użytkownika w bazie
+      parameters:
+      - description: Użytkownik do dodania
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Dodaj nowego użytkownika
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Usuwa użytkownika na podstawie ID
+      parameters:
+      - description: ID użytkownika
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Usuń użytkownika
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Zwraca szczegóły użytkownika na podstawie ID
+      parameters:
+      - description: ID użytkownika
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz użytkownika po ID
+      tags:
+      - Users
+    patch:
+      consumes:
+      - application/json
+      description: Aktualizuje dane użytkownika na podstawie ID
+      parameters:
+      - description: ID użytkownika
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Zaktualizowane dane użytkownika
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Aktualizuj użytkownika
+      tags:
+      - Users
 swagger: "2.0"
