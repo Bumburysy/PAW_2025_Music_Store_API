@@ -1,0 +1,18 @@
+[
+  {
+    "_id": {"$oid": "648e8b8fa4e1f0b9a5c12345"},
+    "title": "The Dark Side of the Moon",
+    "artist": "Pink Floyd",
+    "genre": "Progressive Rock",
+    "price": 59.99,
+    "quantity": 100
+  },
+  {
+    "_id": {"$oid": "648e8b8fa4e1f0b9a5c12346"},
+    "title": "Abbey Road",
+    "artist": "The Beatles",
+    "genre": "Rock",
+    "price": 49.99,
+    "quantity": 50
+  }
+]

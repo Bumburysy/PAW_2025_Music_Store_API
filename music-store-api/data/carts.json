@@ -1,0 +1,12 @@
+[
+  {
+    "_id": {"$oid": "648e8cf5a4e1f0b9a5c1234a"},
+    "user_id": {"$oid": "648e8c0ea4e1f0b9a5c12348"},
+    "items": [
+      {
+        "album_id": {"$oid": "648e8b8fa4e1f0b9a5c12346"},
+        "quantity": 1
+      }
+    ]
+  }
+]

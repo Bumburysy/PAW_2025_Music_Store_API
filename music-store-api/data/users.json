@@ -1,0 +1,18 @@
+[
+  {
+    "_id": {"$oid": "648e8c0ea4e1f0b9a5c12347"},
+    "first_name": "Jan",
+    "last_name": "Kowalski",
+    "email": "jan.kowalski@example.com",
+    "password_hash": "$2a$12$EXAMPLEHASHFORPASSWORD",
+    "role": "employee"
+  },
+  {
+    "_id": {"$oid": "648e8c0ea4e1f0b9a5c12348"},
+    "first_name": "Anna",
+    "last_name": "Nowak",
+    "email": "anna.nowak@example.com",
+    "password_hash": "$2a$12$ANOTHEREXAMPLEHASH",
+    "role": "customer"
+  }
+]

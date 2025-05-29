@@ -1,0 +1,10 @@
+[
+  {
+    "_id": {"$oid": "648e8d40a4e1f0b9a5c1234b"},
+    "album_id": {"$oid": "648e8b8fa4e1f0b9a5c12345"},
+    "user_id": {"$oid": "648e8c0ea4e1f0b9a5c12348"},
+    "rating": 5,
+    "comment": "Fenomenalny album! Polecam każdemu.",
+    "date": {"$date": "2025-05-05T12:00:00Z"}
+  }
+]
