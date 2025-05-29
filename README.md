@@ -3,7 +3,20 @@
 Projekt REST API – Music Store (wersja podstawowa)
 
 ## ToDoList
-- Dalsza rozbudowa do pełnego spełnienia wytycznych z poziomu I i II
+- Ogarnąć CSSa
+- Responsywność skalowanie itp
+- Pełna baza (albumy, użytkownicy, zamówienia, koszyk, recenzje)
+- Skrypty inicializaujące baze
+- Hurtowe dodawanie danych
+- Filtracja albumów sortowanie itp
+
+- Wszystkie endpointy
+- JWT uwierzytlenianie
+- Swagger pełna dokumentacja
+- Opis w README
+- Testy jednostkowe Postman
+- W Swagger pousuwać niepotrzbene pola typu ID Time
+- Zamienić Swaggera na ręcznie napisanego htmla do prezentacji endpointów
 
 ## 📚 Opis funkcjonalny i technologiczny
 
@@ -14,9 +27,10 @@ REST API dla sklepu muzycznego, umożliwiające:
 
 ### 2. Planowane Endpointy
 Albumy (CRUD)
--	GET /albums – pobranie listy albumów
+-	GET /albums – zwraca wszystkie albumy w sklepie z opcjonalnym filtrowaniem, sortowaniem i paginacją
 -	GET /albums/{id} – pobranie szczegółów albumu
 -	POST /albums – dodanie nowego albumu
+- POST /bulk – dodaj wiele albumów naraz
 -	PATCH /albums/{id} – edycja albumu
 -	DELETE /albums/{id} – usunięcie albumu
 
@@ -39,7 +53,7 @@ Kolekcja albums:
 ```
 
 ### 🚀 Technologie
-- **Go**, **MongoDB**, **HTML5**, **CSS3**.
+- **Go**, **GIN**, **MongoDB**, **HTML5**, **CSS3**.
 
 ________________________________________
 
