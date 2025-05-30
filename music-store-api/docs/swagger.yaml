@@ -2,42 +2,183 @@ definitions:
   models.Album:
     properties:
       artist:
+        description: Nazwa wykonawcy
         type: string
       cover_url:
+        description: URL do okładki albumu
         type: string
       created_at:
+        description: Data utworzenia wpisu
+        type: string
+      description:
+        description: Opis albumu
         type: string
       genre:
+        description: Gatunek muzyczny
         type: string
       id:
+        description: ID albumu
         type: string
       price:
+        description: Cena albumu
         type: number
       quantity:
+        description: Ilość dostępnych sztuk
         type: integer
-      title:
+      release_date:
+        description: Data wydania
         type: string
+      title:
+        description: Tytuł albumu
+        type: string
+      tracks:
+        description: Lista utworów
+        items:
+          type: string
+        type: array
       updated_at:
+        description: Data ostatniej aktualizacji
+        type: string
+    type: object
+  models.Cart:
+    properties:
+      id:
+        description: ID koszyka (unikalny identyfikator)
+        type: string
+      items:
+        description: Lista pozycji w koszyku
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      total:
+        description: Sumaryczna wartości koszyka
+        type: number
+      user_id:
+        description: ID użytkownika, do którego należy koszyk
+        type: string
+    type: object
+  models.CartItem:
+    properties:
+      album_id:
+        description: ID albumu dodanego do koszyka
+        type: string
+      quantity:
+        description: Ilość sztuk albumu w koszyku
+        type: integer
+    type: object
+  models.Order:
+    properties:
+      created_at:
+        description: Data utworzenia zamówienia
+        type: string
+      id:
+        description: ID zamówienia (unikalny identyfikator)
+        type: string
+      items:
+        description: Lista pozycji w zamówieniu
+        items:
+          $ref: '#/definitions/models.OrderItem'
+        type: array
+      shipping:
+        allOf:
+        - $ref: '#/definitions/models.ShippingDetails'
+        description: Dane do wysyłki
+      status:
+        description: Status zamówienia (pending, processing, shipped, completed, cancelled)
+        type: string
+      total:
+        description: Całkowita wartość zamówienia
+        type: number
+      updated_at:
+        description: Data ostatniej aktualizacji zamówienia
+        type: string
+      user_id:
+        description: ID użytkownika, który złożył zamówienie
+        type: string
+    type: object
+  models.OrderItem:
+    properties:
+      album_id:
+        description: ID albumu w zamówieniu
+        type: string
+      price:
+        description: Cena jednostkowa albumu w momencie zamówienia
+        type: number
+      quantity:
+        description: Ilość sztuk albumu
+        type: integer
+    type: object
+  models.Review:
+    properties:
+      album_id:
+        description: ID albumu, którego dotyczy recenzja
+        type: string
+      comment:
+        description: Komentarz do recenzji
+        type: string
+      created_at:
+        description: Data utworzenia recenzji
+        type: string
+      id:
+        description: ID recenzji (unikalny identyfikator)
+        type: string
+      rating:
+        description: Ocena albumu (np. od 1 do 5)
+        type: integer
+      user_id:
+        description: ID użytkownika, który dodał recenzję
+        type: string
+    type: object
+  models.ShippingDetails:
+    properties:
+      address:
+        description: Adres dostawy (np. ulica, nr domu/mieszkania)
+        type: string
+      city:
+        description: Miasto dostawy
+        type: string
+      country:
+        description: Kraj dostawy
+        type: string
+      phone_number:
+        description: Numer telefonu kontaktowego
+        type: string
+      postal_code:
+        description: Kod pocztowy dostawy
         type: string
     type: object
   models.User:
     properties:
       created_at:
+        description: Data utworzenia użytkownika
         type: string
       email:
+        description: Adres email użytkownika
         type: string
       first_name:
+        description: Imię użytkownika
         type: string
       id:
+        description: ID użytkownika (unikalny identyfikator)
         type: string
       is_active:
+        description: Czy konto jest aktywne
         type: boolean
       last_name:
+        description: Nazwisko użytkownika
+        type: string
+      phoneNumber:
+        description: Numer telefonu
         type: string
       role:
-        description: '"employee", "customer", "admin"'
+        description: Rola użytkownika (np. "employee", "customer", "admin")
         type: string
+      shipping_details:
+        allOf:
+        - $ref: '#/definitions/models.ShippingDetails'
+        description: Dane adresowe
       updated_at:
+        description: Data ostatniej aktualizacji
         type: string
     type: object
 info:
@@ -119,8 +260,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - ApiKeyAuth: []
       summary: Dodaj nowy album
       tags:
       - Albums
@@ -162,8 +301,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - ApiKeyAuth: []
       summary: Usuń album
       tags:
       - Albums
@@ -242,8 +379,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - ApiKeyAuth: []
       summary: Zaktualizuj album
       tags:
       - Albums
@@ -281,11 +416,918 @@ paths:
             additionalProperties:
               type: string
             type: object
-      security:
-      - ApiKeyAuth: []
       summary: Dodaj wiele albumów naraz
       tags:
       - Albums
+  /carts:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Cart'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz wszystkie koszyki
+      tags:
+      - Carts
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Nowy koszyk
+        in: body
+        name: cart
+        required: true
+        schema:
+          $ref: '#/definitions/models.Cart'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Utwórz nowy koszyk
+      tags:
+      - Carts
+  /carts/{cartID}/items:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: cartID
+        required: true
+        type: string
+      - description: Pozycja do dodania
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/models.CartItem'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Dodaj pozycję do koszyka lub zaktualizuj ilość
+      tags:
+      - Carts
+  /carts/{cartID}/items/{albumID}:
+    delete:
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: cartID
+        required: true
+        type: string
+      - description: ID albumu
+        in: path
+        name: albumID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Usuń pozycję z koszyka
+      tags:
+      - Carts
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: cartID
+        required: true
+        type: string
+      - description: ID albumu
+        in: path
+        name: albumID
+        required: true
+        type: string
+      - description: Nowa ilość
+        in: body
+        name: quantity
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Zaktualizuj ilość pozycji w koszyku
+      tags:
+      - Carts
+  /carts/{cartID}/total:
+    put:
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: cartID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Niepoprawne ID koszyka
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Koszyk nie znaleziony
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Błąd serwera podczas pobierania lub aktualizacji danych
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Oblicz i zaktualizuj sumę wartości koszyka
+      tags:
+      - Carts
+  /carts/{id}:
+    delete:
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Usuń koszyk
+      tags:
+      - Carts
+    get:
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz koszyk po ID
+      tags:
+      - Carts
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dane koszyka
+        in: body
+        name: cart
+        required: true
+        schema:
+          $ref: '#/definitions/models.Cart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Zaktualizuj koszyk
+      tags:
+      - Carts
+  /carts/{id}/clear:
+    post:
+      parameters:
+      - description: ID koszyka
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Wyczyść koszyk (usuń wszystkie pozycje i zresetuj sumę)
+      tags:
+      - Carts
+  /carts/user/{userID}:
+    get:
+      parameters:
+      - description: ID użytkownika
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Cart'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz koszyk użytkownika
+      tags:
+      - Carts
+  /orders:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz wszystkie zamówienia
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Nowe zamówienie
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.Order'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Order'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Utwórz nowe zamówienie
+      tags:
+      - Orders
+  /orders/{id}:
+    delete:
+      parameters:
+      - description: ID zamówienia
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Usuń zamówienie
+      tags:
+      - Orders
+    get:
+      parameters:
+      - description: ID zamówienia
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Order'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz zamówienie po ID
+      tags:
+      - Orders
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID zamówienia
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dane zamówienia do aktualizacji
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Zaktualizuj zamówienie (np. status)
+      tags:
+      - Orders
+  /orders/{id}/shipping:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID zamówienia
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Nowe dane wysyłki
+        in: body
+        name: shipping
+        required: true
+        schema:
+          $ref: '#/definitions/models.ShippingDetails'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Zaktualizuj dane wysyłki zamówienia
+      tags:
+      - Orders
+  /orders/{id}/status:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID zamówienia
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Nowy status zamówienia
+        in: body
+        name: status
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Zaktualizuj status zamówienia
+      tags:
+      - Orders
+  /orders/user/{userID}:
+    get:
+      parameters:
+      - description: ID użytkownika
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Order'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz zamówienia użytkownika
+      tags:
+      - Orders
+  /reviews:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Review'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz wszystkie recenzje
+      tags:
+      - Reviews
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Nowa recenzja
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/models.Review'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Review'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Dodaj nową recenzję
+      tags:
+      - Reviews
+  /reviews/{id}:
+    delete:
+      parameters:
+      - description: ID recenzji
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Usuń recenzję
+      tags:
+      - Reviews
+    get:
+      parameters:
+      - description: ID recenzji
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Review'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz recenzję po ID
+      tags:
+      - Reviews
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID recenzji
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dane recenzji do aktualizacji
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/models.Review'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Zaktualizuj recenzję
+      tags:
+      - Reviews
+  /reviews/album/{albumID}:
+    get:
+      parameters:
+      - description: ID albumu
+        in: path
+        name: albumID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Review'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz recenzje dla konkretnego albumu
+      tags:
+      - Reviews
+  /reviews/user/{userID}:
+    get:
+      parameters:
+      - description: ID użytkownika
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Review'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Pobierz recenzje użytkownika
+      tags:
+      - Reviews
   /users:
     get:
       consumes:
