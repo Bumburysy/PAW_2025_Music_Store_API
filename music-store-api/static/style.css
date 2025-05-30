@@ -62,7 +62,7 @@ main {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 95%;
+    max-width: 85%;
     padding: 2rem;
     margin: 2rem auto;
 }
