@@ -12,8 +12,13 @@ import (
 
 func main() {
 	config.ConnectDB()
+	defer config.DisconnectDB()
+
 	controllers.InitAlbumCollection()
 	controllers.InitUserCollection()
+	controllers.InitCartCollection()
+	controllers.InitOrderCollection()
+	controllers.InitReviewCollection()
 
 	r := gin.Default()
 
@@ -41,6 +46,44 @@ func main() {
 		userRoutes.POST("", controllers.CreateUser)
 		userRoutes.PATCH("/:id", controllers.UpdateUser)
 		userRoutes.DELETE("/:id", controllers.DeleteUser)
+	}
+
+	orderRoutes := r.Group("/orders")
+	{
+		orderRoutes.GET("/", controllers.GetOrders)
+		orderRoutes.GET("/:id", controllers.GetOrderByID)
+		orderRoutes.GET("/user/:userID", controllers.GetOrdersByUserID)
+		orderRoutes.POST("/", controllers.CreateOrder)
+		orderRoutes.PUT("/:id", controllers.UpdateOrder)
+		orderRoutes.DELETE("/:id", controllers.DeleteOrder)
+		orderRoutes.PATCH("/:id/status", controllers.UpdateOrderStatus)
+		orderRoutes.PUT("/:id/shipping", controllers.UpdateOrderShipping)
+	}
+
+	cartRoutes := r.Group("/carts")
+	{
+		cartRoutes.GET("", controllers.GetCarts)
+		cartRoutes.GET("user/:userID", controllers.GetCartByUserID)
+		cartRoutes.GET(":id", controllers.GetCartByID)
+		cartRoutes.POST("", controllers.CreateCart)
+		cartRoutes.PUT(":id", controllers.UpdateCart)
+		cartRoutes.DELETE(":id", controllers.DeleteCart)
+		cartRoutes.POST(":id/items", controllers.AddItemToCart)
+		cartRoutes.DELETE(":id/items/:albumID", controllers.RemoveItemFromCart)
+		cartRoutes.PUT(":id/items/:albumID", controllers.UpdateCartItemQuantity)
+		cartRoutes.PUT(":id/total", controllers.UpdateCartTotal)
+		cartRoutes.POST(":id/clear", controllers.ClearCart)
+	}
+
+	reviewRoutes := r.Group("/reviews")
+	{
+		reviewRoutes.GET("/album/:albumID", controllers.GetReviewsByAlbumID)
+		reviewRoutes.GET("/user/:userID", controllers.GetReviewsByUserID)
+		reviewRoutes.GET("/:id", controllers.GetReviewByID)
+		reviewRoutes.GET("", controllers.GetReviews)
+		reviewRoutes.POST("", controllers.CreateReview)
+		reviewRoutes.PUT("/:id", controllers.UpdateReview)
+		reviewRoutes.DELETE("/:id", controllers.DeleteReview)
 	}
 
 	dataRoutes := r.Group("/data")
