@@ -39,7 +39,6 @@ func InitAlbumCollection() {
 // @Failure 500 {object} map[string]string
 // @Router /albums [get]
 func GetAlbums(c *gin.Context) {
-	// Parsujemy parametry zapytania
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil || page < 1 {
 		page = 1
@@ -52,7 +51,6 @@ func GetAlbums(c *gin.Context) {
 	genre := c.Query("genre")
 	sort := c.DefaultQuery("sort", "")
 
-	// Budujemy filtr
 	filter := bson.M{}
 	if artist != "" {
 		filter["artist"] = bson.M{"$regex": artist, "$options": "i"}
@@ -61,7 +59,6 @@ func GetAlbums(c *gin.Context) {
 		filter["genre"] = bson.M{"$regex": genre, "$options": "i"}
 	}
 
-	// Ustawienia sortowania
 	findOptions := options.Find()
 	if sort != "" {
 		sortFields := bson.D{}
@@ -76,14 +73,12 @@ func GetAlbums(c *gin.Context) {
 		findOptions.SetSort(sortFields)
 	}
 
-	// Paginacja (skip i limit)
 	findOptions.SetSkip(int64((page - 1) * limit))
 	findOptions.SetLimit(int64(limit))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Pobieramy dane
 	cursor, err := albumCollection.Find(ctx, filter, findOptions)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd pobierania albumów"})
@@ -97,7 +92,6 @@ func GetAlbums(c *gin.Context) {
 		return
 	}
 
-	// Liczymy liczbę wszystkich dokumentów dla podanego filtra (do podania total count)
 	total, _ := albumCollection.CountDocuments(ctx, filter)
 
 	c.JSON(http.StatusOK, gin.H{
@@ -151,7 +145,6 @@ func GetAlbumByID(c *gin.Context) {
 // @Success 201 {object} models.Album
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Security ApiKeyAuth
 // @Router /albums [post]
 func CreateAlbum(c *gin.Context) {
 	var album models.Album
@@ -185,7 +178,6 @@ func CreateAlbum(c *gin.Context) {
 // @Success 201 {object} map[string]interface{} "Informacja o dodanych albumach i ich liczbie"
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Security ApiKeyAuth
 // @Router /albums/bulk [post]
 func CreateAlbumsBulk(c *gin.Context) {
 	var albums []models.Album
@@ -225,7 +217,6 @@ func CreateAlbumsBulk(c *gin.Context) {
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Security ApiKeyAuth
 // @Router /albums/{id} [patch]
 func UpdateAlbum(c *gin.Context) {
 	idParam := c.Param("id")
@@ -278,7 +269,6 @@ func UpdateAlbum(c *gin.Context) {
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Failure 500 {object} map[string]string
-// @Security ApiKeyAuth
 // @Router /albums/{id} [delete]
 func DeleteAlbum(c *gin.Context) {
 	idParam := c.Param("id")

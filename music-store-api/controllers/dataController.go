@@ -3,17 +3,20 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	"log"
 	"music-store-api/config"
 	"music-store-api/models"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func LoadTestData(c *gin.Context) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	db := config.DB
 
 	type FileData struct {
@@ -31,30 +34,37 @@ func LoadTestData(c *gin.Context) {
 	}
 
 	for _, file := range files {
-		path := fmt.Sprintf("data/%s", file.Filename)
+		path := "data/" + file.Filename
+
 		byteValue, err := os.ReadFile(path)
 		if err != nil {
-			fmt.Printf("Nie udało się otworzyć %s: %v\n", path, err)
-			continue
+			log.Printf("Nie udało się otworzyć %s: %v", path, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd odczytu pliku " + file.Filename})
+			return
 		}
 
 		err = json.Unmarshal(byteValue, file.Model)
 		if err != nil {
-			fmt.Printf("Błąd dekodowania %s: %v\n", path, err)
-			continue
+			log.Printf("Błąd dekodowania %s: %v", path, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd dekodowania pliku " + file.Filename})
+			return
 		}
 
+		setTimestamps(file.Model)
+
 		if err := db.Collection(file.Collection).Drop(ctx); err != nil {
-			fmt.Printf("Błąd przy czyszczeniu kolekcji %s: %v\n", file.Collection, err)
-			continue
+			log.Printf("Błąd przy czyszczeniu kolekcji %s: %v", file.Collection, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd czyszczenia kolekcji " + file.Collection})
+			return
 		}
 
 		docs := toInterfaceSlice(file.Model)
 		if len(docs) > 0 {
 			_, err := db.Collection(file.Collection).InsertMany(ctx, docs)
 			if err != nil {
-				fmt.Printf("Błąd przy wstawianiu do %s: %v\n", file.Collection, err)
-				continue
+				log.Printf("Błąd przy wstawianiu do %s: %v", file.Collection, err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd wstawiania do kolekcji " + file.Collection})
+				return
 			}
 		}
 	}
@@ -87,4 +97,29 @@ func toInterfaceSlice(data interface{}) []interface{} {
 		}
 	}
 	return res
+}
+
+func setTimestamps(data interface{}) {
+	now := time.Now()
+	switch v := data.(type) {
+	case *[]models.Album:
+		for i := range *v {
+			(*v)[i].CreatedAt = now
+			(*v)[i].UpdatedAt = now
+		}
+	case *[]models.User:
+		for i := range *v {
+			(*v)[i].CreatedAt = now
+			(*v)[i].UpdatedAt = now
+		}
+	case *[]models.Order:
+		for i := range *v {
+			(*v)[i].CreatedAt = now
+			(*v)[i].UpdatedAt = now
+		}
+	case *[]models.Review:
+		for i := range *v {
+			(*v)[i].CreatedAt = now
+		}
+	}
 }

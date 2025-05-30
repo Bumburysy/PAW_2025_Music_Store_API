@@ -3,7 +3,9 @@ package controllers
 import (
 	"context"
 	"music-store-api/config"
+	"music-store-api/middleware"
 	"music-store-api/models"
+
 	"net/http"
 	"time"
 
@@ -100,7 +102,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	// Tu trzeba zahashować hasło (np. bcrypt) przed zapisaniem
-	hashedPassword, err := HashPassword(user.PasswordHash)
+	hashedPassword, err := middleware.HashPassword(user.PasswordHash)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd haszowania hasła"})
 		return
@@ -161,7 +163,7 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	if user.PasswordHash != "" {
-		hashedPassword, err := HashPassword(user.PasswordHash)
+		hashedPassword, err := middleware.HashPassword(user.PasswordHash)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd haszowania hasła"})
 			return
