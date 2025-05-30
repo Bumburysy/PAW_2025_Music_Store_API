@@ -1,20 +1,77 @@
 [
   {
-    "_id": {"$oid": "648e8c74a4e1f0b9a5c12349"},
-    "user_id": {"$oid": "648e8c0ea4e1f0b9a5c12348"},
-    "order_date": {"$date": "2025-05-01T14:30:00Z"},
-    "status": "processing",
+    "_id": { "$oid": "665faa8a1f4d4bff82aab123" },
+    "user_id": { "$oid": "665fa1231f4d4bff82aab111" },
     "items": [
       {
-        "album_id": {"$oid": "648e8b8fa4e1f0b9a5c12345"},
-        "quantity": 1,
-        "price": 59.99
+        "album_id": { "$oid": "665fa9991f4d4bff82aab456" },
+        "quantity": 2,
+        "price": 29.99
       },
       {
-        "album_id": {"$oid": "648e8b8fa4e1f0b9a5c12346"},
-        "quantity": 2,
+        "album_id": { "$oid": "665fa8881f4d4bff82aab457" },
+        "quantity": 1,
         "price": 49.99
       }
-    ]
+    ],
+    "total": 109.97,
+    "status": "pending",
+    "created_at": { "$date": "2024-06-01T10:00:00Z" },
+    "updated_at": { "$date": "2024-06-01T10:00:00Z" },
+    "shipping": {
+      "full_name": "Jan Kowalski",
+      "address": "ul. Kwiatowa 10",
+      "city": "Warszawa",
+      "postal_code": "00-001",
+      "country": "Polska",
+      "phone_number": "+48123456789"
+    }
+  },
+  {
+    "_id": { "$oid": "665fabcd1f4d4bff82aab124" },
+    "user_id": { "$oid": "665fa1231f4d4bff82aab112" },
+    "items": [
+      {
+        "album_id": { "$oid": "665fabcd1f4d4bff82aab458" },
+        "quantity": 1,
+        "price": 39.99
+      }
+    ],
+    "total": 39.99,
+    "status": "processing",
+    "created_at": { "$date": "2024-06-02T12:30:00Z" },
+    "updated_at": { "$date": "2024-06-03T09:00:00Z" },
+    "shipping": {
+      "full_name": "Anna Nowak",
+      "address": "ul. Zielona 5",
+      "city": "Kraków",
+      "postal_code": "30-001",
+      "country": "Polska",
+      "phone_number": "+48123456780"
+    }
+  },
+  {
+    "_id": { "$oid": "665facee1f4d4bff82aab125" },
+    "user_id": { "$oid": "665fa1231f4d4bff82aab113" },
+    "items": [
+      {
+        "album_id": { "$oid": "665faced1f4d4bff82aab459" },
+        "quantity": 3,
+        "price": 19.99
+      }
+    ],
+    "total": 59.97,
+    "status": "shipped",
+    "created_at": { "$date": "2024-06-01T08:15:00Z" },
+    "updated_at": { "$date": "2024-06-04T14:45:00Z" },
+    "shipping": {
+      "full_name": "Piotr Wiśniewski",
+      "address": "ul. Słoneczna 7",
+      "city": "Gdańsk",
+      "postal_code": "80-001",
+      "country": "Polska",
+      "phone_number": "+48123456781"
+    }
   }
 ]
+

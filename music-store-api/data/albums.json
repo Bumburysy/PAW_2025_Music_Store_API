@@ -1,18 +1,112 @@
 [
   {
-    "_id": {"$oid": "648e8b8fa4e1f0b9a5c12345"},
     "title": "The Dark Side of the Moon",
     "artist": "Pink Floyd",
     "genre": "Progressive Rock",
-    "price": 59.99,
-    "quantity": 100
+    "description": "Classic album from Pink Floyd.",
+    "release_date": "1973-03-01T00:00:00Z",
+    "tracks": ["Speak to Me", "Breathe", "Time", "Money"],
+    "price": 29.99,
+    "quantity": 100,
+    "cover_url": "https://example.com/darkside.jpg"
   },
   {
-    "_id": {"$oid": "648e8b8fa4e1f0b9a5c12346"},
+    "title": "Thriller",
+    "artist": "Michael Jackson",
+    "genre": "Pop",
+    "description": "Best-selling album of all time.",
+    "release_date": "1982-11-30T00:00:00Z",
+    "tracks": ["Wanna Be Startin' Somethin'", "Thriller", "Beat It"],
+    "price": 24.99,
+    "quantity": 150,
+    "cover_url": "https://example.com/thriller.jpg"
+  },
+  {
+    "title": "Back in Black",
+    "artist": "AC/DC",
+    "genre": "Hard Rock",
+    "description": "Iconic album by AC/DC.",
+    "release_date": "1980-07-25T00:00:00Z",
+    "tracks": ["Hells Bells", "Shoot to Thrill", "Back in Black"],
+    "price": 22.50,
+    "quantity": 90,
+    "cover_url": "https://example.com/backinblack.jpg"
+  },
+  {
+    "title": "Rumours",
+    "artist": "Fleetwood Mac",
+    "genre": "Rock",
+    "description": "One of the best-selling albums ever.",
+    "release_date": "1977-02-04T00:00:00Z",
+    "tracks": ["Dreams", "Go Your Own Way", "The Chain"],
+    "price": 21.00,
+    "quantity": 120,
+    "cover_url": "https://example.com/rumours.jpg"
+  },
+  {
     "title": "Abbey Road",
     "artist": "The Beatles",
     "genre": "Rock",
-    "price": 49.99,
-    "quantity": 50
+    "description": "Classic Beatles album.",
+    "release_date": "1969-09-26T00:00:00Z",
+    "tracks": ["Come Together", "Something", "Here Comes The Sun"],
+    "price": 27.00,
+    "quantity": 80,
+    "cover_url": "https://example.com/abbeyroad.jpg"
+  },
+  {
+    "title": "Hotel California",
+    "artist": "Eagles",
+    "genre": "Rock",
+    "description": "Famous Eagles album with the title track.",
+    "release_date": "1976-12-08T00:00:00Z",
+    "tracks": ["Hotel California", "New Kid in Town", "Life in the Fast Lane"],
+    "price": 23.50,
+    "quantity": 110,
+    "cover_url": "https://example.com/hotelcalifornia.jpg"
+  },
+  {
+    "title": "Nevermind",
+    "artist": "Nirvana",
+    "genre": "Grunge",
+    "description": "Breakthrough album of the grunge era.",
+    "release_date": "1991-09-24T00:00:00Z",
+    "tracks": ["Smells Like Teen Spirit", "Come as You Are", "Lithium"],
+    "price": 25.00,
+    "quantity": 95,
+    "cover_url": "https://example.com/nevermind.jpg"
+  },
+  {
+    "title": "21",
+    "artist": "Adele",
+    "genre": "Pop",
+    "description": "Award-winning album by Adele.",
+    "release_date": "2011-01-24T00:00:00Z",
+    "tracks": ["Rolling in the Deep", "Someone Like You", "Set Fire to the Rain"],
+    "price": 20.00,
+    "quantity": 140,
+    "cover_url": "https://example.com/21adele.jpg"
+  },
+  {
+    "title": "Born to Run",
+    "artist": "Bruce Springsteen",
+    "genre": "Rock",
+    "description": "Classic Bruce Springsteen album.",
+    "release_date": "1975-08-25T00:00:00Z",
+    "tracks": ["Born to Run", "Thunder Road", "Jungleland"],
+    "price": 22.00,
+    "quantity": 85,
+    "cover_url": "https://example.com/borntorun.jpg"
+  },
+  {
+    "title": "Purple Rain",
+    "artist": "Prince",
+    "genre": "Pop/Rock",
+    "description": "Famous album and soundtrack by Prince.",
+    "release_date": "1984-06-25T00:00:00Z",
+    "tracks": ["Purple Rain", "When Doves Cry", "Let's Go Crazy"],
+    "price": 24.00,
+    "quantity": 100,
+    "cover_url": "https://example.com/purplerain.jpg"
   }
 ]
