@@ -1,56 +1,30 @@
 # 🎵 Music Store API – Dokumentacja Techniczna
 
-Projekt REST API – Music Store (wersja podstawowa)
+Projekt REST API – Music Store
 
 ## ToDoList
-- Ogarnąć CSSa
-- Responsywność skalowanie itp
-- Pełna baza (albumy, użytkownicy, zamówienia, koszyk, recenzje)
-- Skrypty inicializaujące baze
-- Hurtowe dodawanie danych
-- Filtracja albumów sortowanie itp
 
-- Wszystkie endpointy
-- JWT uwierzytlenianie
-- Swagger pełna dokumentacja
-- Opis w README
-- Testy jednostkowe Postman
-- W Swagger pousuwać niepotrzbene pola typu ID Time
-- Zamienić Swaggera na ręcznie napisanego htmla do prezentacji endpointów
+- Sprawdzić poprawność działania endpointów
+- Dodać uwierzytlenianie JWT
+- Usunąć iframe i wstawić prosty opis + link do prezentacji endpointów
+- Poprawić dokumentację Swaggera - usunąć niepotrzbne pola generowane automatycznie
+- Dodać testy Postman
+- Poprawić README do pełnej dokumentacji
+- Dodać opis z README do głównego widoku 
+- Poprawić stylowanie CSS
+- Poprawić responsywność i skalowanie
 
 ## 📚 Opis funkcjonalny i technologiczny
 
 ### 1. Przeznaczenie
-REST API dla sklepu muzycznego, umożliwiające:
--	przeglądanie dostępnych albumów
--	zarządzanie ofertą i stanami magazynowymi
 
-### 2. Planowane Endpointy
-Albumy (CRUD)
--	GET /albums – zwraca wszystkie albumy w sklepie z opcjonalnym filtrowaniem, sortowaniem i paginacją
--	GET /albums/{id} – pobranie szczegółów albumu
--	POST /albums – dodanie nowego albumu
-- POST /bulk – dodaj wiele albumów naraz
--	PATCH /albums/{id} – edycja albumu
--	DELETE /albums/{id} – usunięcie albumu
+### 2. Planowane endpointy
 
 ### 3. Zakres funkcjonalny
--	CRUD na kolekcji albumów w MongoDB (albums)
--	Dokumentacja API w Swagger UI
 
 ### 4. Projekt bazy danych (MongoDB)
 
-Kolekcja albums:
-```json
-{
-  "_id": ObjectId,
-  "title": "Album Title",
-  "artist": "Artist Name",
-  "genre": "Genre",
-  "price": 9.99,
-  "quantity": 10
-}
-```
+### 5. Autoryzacja użytkowników
 
 ### 🚀 Technologie
 - **Go**, **GIN**, **MongoDB**, **HTML5**, **CSS3**.
