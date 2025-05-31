@@ -4,10 +4,12 @@ Projekt REST API – Music Store
 
 ## ToDoList
 
-- Sprawdzić poprawność działania endpointów
-- Dodać uwierzytlenianie JWT
+- Dodać dane testowe dla orders i reviews - problem z połączeniem z danymi od users i albums
+
+- Dodać uwierzytlenianie JWT - DZIAŁA YEY
+
 - Usunąć iframe i wstawić prosty opis + link do prezentacji endpointów
-- Poprawić dokumentację Swaggera - usunąć niepotrzbne pola generowane automatycznie
+- Poprawić dokumentację Swaggera - usunąć niepotrzbne pola generowane automatycznie przez DTO
 - Dodać testy Postman
 - Poprawić README do pełnej dokumentacji
 - Dodać opis z README do głównego widoku 
