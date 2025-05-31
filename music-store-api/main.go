@@ -4,11 +4,22 @@ import (
 	"music-store-api/config"
 	"music-store-api/controllers"
 	_ "music-store-api/docs"
+	"music-store-api/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+// @title Music Store API
+// @version 1.0
+// @description API do zarządzania sklepem muzycznym
+
+// @host localhost:25565
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 
 func main() {
 	config.ConnectDB()
@@ -16,11 +27,12 @@ func main() {
 
 	controllers.InitAlbumCollection()
 	controllers.InitUserCollection()
-	controllers.InitCartCollection()
 	controllers.InitOrderCollection()
 	controllers.InitReviewCollection()
 
 	r := gin.Default()
+
+	r.POST("/login", controllers.Login)
 
 	r.Static("/static", "./static")
 	r.GET("/", func(c *gin.Context) {
@@ -30,9 +42,11 @@ func main() {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	albumRoutes := r.Group("/albums")
+	albumRoutes.GET("", controllers.GetAlbums)
+	albumRoutes.GET("/:id", controllers.GetAlbumByID)
+
+	albumRoutes.Use(middleware.AuthMiddleware())
 	{
-		albumRoutes.GET("", controllers.GetAlbums)
-		albumRoutes.GET("/:id", controllers.GetAlbumByID)
 		albumRoutes.POST("", controllers.CreateAlbum)
 		albumRoutes.POST("/bulk", controllers.CreateAlbumsBulk)
 		albumRoutes.PATCH("/:id", controllers.UpdateAlbum)
@@ -40,6 +54,7 @@ func main() {
 	}
 
 	userRoutes := r.Group("/users")
+	userRoutes.Use(middleware.AuthMiddleware())
 	{
 		userRoutes.GET("", controllers.GetUsers)
 		userRoutes.GET("/:id", controllers.GetUserByID)
@@ -49,6 +64,7 @@ func main() {
 	}
 
 	orderRoutes := r.Group("/orders")
+	orderRoutes.Use(middleware.AuthMiddleware())
 	{
 		orderRoutes.GET("/", controllers.GetOrders)
 		orderRoutes.GET("/:id", controllers.GetOrderByID)
@@ -60,22 +76,8 @@ func main() {
 		orderRoutes.PUT("/:id/shipping", controllers.UpdateOrderShipping)
 	}
 
-	cartRoutes := r.Group("/carts")
-	{
-		cartRoutes.GET("", controllers.GetCarts)
-		cartRoutes.GET("user/:userID", controllers.GetCartByUserID)
-		cartRoutes.GET(":id", controllers.GetCartByID)
-		cartRoutes.POST("", controllers.CreateCart)
-		cartRoutes.PUT(":id", controllers.UpdateCart)
-		cartRoutes.DELETE(":id", controllers.DeleteCart)
-		cartRoutes.POST(":id/items", controllers.AddItemToCart)
-		cartRoutes.DELETE(":id/items/:albumID", controllers.RemoveItemFromCart)
-		cartRoutes.PUT(":id/items/:albumID", controllers.UpdateCartItemQuantity)
-		cartRoutes.PUT(":id/total", controllers.UpdateCartTotal)
-		cartRoutes.POST(":id/clear", controllers.ClearCart)
-	}
-
 	reviewRoutes := r.Group("/reviews")
+	reviewRoutes.Use(middleware.AuthMiddleware())
 	{
 		reviewRoutes.GET("/album/:albumID", controllers.GetReviewsByAlbumID)
 		reviewRoutes.GET("/user/:userID", controllers.GetReviewsByUserID)
@@ -87,6 +89,7 @@ func main() {
 	}
 
 	dataRoutes := r.Group("/data")
+	//dataRoutes.Use(middleware.AuthMiddleware())
 	{
 		dataRoutes.POST("/load", controllers.LoadTestData)
 	}
