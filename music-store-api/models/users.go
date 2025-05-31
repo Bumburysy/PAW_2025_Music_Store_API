@@ -19,6 +19,8 @@ type User struct {
 	Email string `bson:"email" json:"email"`
 	// Numer telefonu
 	PhoneNumber string `bson:"phone_number,omitempty"`
+	// Hasło
+	Password string `bson:"-" json:"password"`
 	// Hash hasła (niewidoczny w API)
 	PasswordHash string `bson:"password_hash" json:"-"`
 	// Rola użytkownika (np. "employee", "customer", "admin")
