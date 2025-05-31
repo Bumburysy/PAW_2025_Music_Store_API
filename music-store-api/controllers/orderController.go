@@ -21,10 +21,11 @@ func InitOrderCollection() {
 
 // GetOrders godoc
 // @Summary Pobierz wszystkie zamówienia
+// @Security BearerAuth
 // @Tags Orders
 // @Produce json
 // @Success 200 {array} models.Order
-// @Failure 500 {object} map[string]string
+// @Failure 500 {object} models.ErrorResponse
 // @Router /orders [get]
 func GetOrders(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -48,12 +49,13 @@ func GetOrders(c *gin.Context) {
 
 // GetOrderByID godoc
 // @Summary Pobierz zamówienie po ID
+// @Security BearerAuth
 // @Tags Orders
 // @Produce json
 // @Param id path string true "ID zamówienia"
 // @Success 200 {object} models.Order
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
 // @Router /orders/{id} [get]
 func GetOrderByID(c *gin.Context) {
 	idParam := c.Param("id")
@@ -78,11 +80,12 @@ func GetOrderByID(c *gin.Context) {
 
 // GetOrdersByUserID godoc
 // @Summary Pobierz zamówienia użytkownika
+// @Security BearerAuth
 // @Tags Orders
 // @Produce json
 // @Param userID path string true "ID użytkownika"
 // @Success 200 {array} models.Order
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} models.ErrorResponse
 // @Router /orders/user/{userID} [get]
 func GetOrdersByUserID(c *gin.Context) {
 	userIDParam := c.Param("userID")
@@ -113,13 +116,14 @@ func GetOrdersByUserID(c *gin.Context) {
 
 // CreateOrder godoc
 // @Summary Utwórz nowe zamówienie
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
 // @Param order body models.Order true "Nowe zamówienie"
 // @Success 201 {object} models.Order
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /orders [post]
 func CreateOrder(c *gin.Context) {
 	var order models.Order
@@ -146,15 +150,16 @@ func CreateOrder(c *gin.Context) {
 
 // UpdateOrder godoc
 // @Summary Zaktualizuj zamówienie (np. status)
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
 // @Param id path string true "ID zamówienia"
 // @Param order body models.Order true "Dane zamówienia do aktualizacji"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /orders/{id} [put]
 func UpdateOrder(c *gin.Context) {
 	idParam := c.Param("id")
@@ -195,13 +200,14 @@ func UpdateOrder(c *gin.Context) {
 
 // DeleteOrder godoc
 // @Summary Usuń zamówienie
+// @Security BearerAuth
 // @Tags Orders
 // @Produce json
 // @Param id path string true "ID zamówienia"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /orders/{id} [delete]
 func DeleteOrder(c *gin.Context) {
 	idParam := c.Param("id")
@@ -230,15 +236,16 @@ func DeleteOrder(c *gin.Context) {
 
 // UpdateOrderStatus godoc
 // @Summary Zaktualizuj status zamówienia
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
 // @Param id path string true "ID zamówienia"
 // @Param status body map[string]string true "Nowy status zamówienia"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /orders/{id}/status [patch]
 func UpdateOrderStatus(c *gin.Context) {
 	idParam := c.Param("id")
@@ -291,15 +298,16 @@ func UpdateOrderStatus(c *gin.Context) {
 
 // UpdateOrderShipping godoc
 // @Summary Zaktualizuj dane wysyłki zamówienia
+// @Security BearerAuth
 // @Tags Orders
 // @Accept json
 // @Produce json
 // @Param id path string true "ID zamówienia"
 // @Param shipping body models.ShippingDetails true "Nowe dane wysyłki"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /orders/{id}/shipping [put]
 func UpdateOrderShipping(c *gin.Context) {
 	idParam := c.Param("id")

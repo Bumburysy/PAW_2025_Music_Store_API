@@ -21,10 +21,11 @@ func InitReviewCollection() {
 
 // GetReviews godoc
 // @Summary Pobierz wszystkie recenzje
+// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
-// @Success 200 {array} models.Review
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.Review
+// @Failure 500 {object} models.ErrorResponse
 // @Router /reviews [get]
 func GetReviews(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -48,12 +49,13 @@ func GetReviews(c *gin.Context) {
 
 // GetReviewByID godoc
 // @Summary Pobierz recenzję po ID
+// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Param id path string true "ID recenzji"
 // @Success 200 {object} models.Review
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
 // @Router /reviews/{id} [get]
 func GetReviewByID(c *gin.Context) {
 	idParam := c.Param("id")
@@ -78,12 +80,13 @@ func GetReviewByID(c *gin.Context) {
 
 // GetReviewsByAlbumID godoc
 // @Summary Pobierz recenzje dla konkretnego albumu
+// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Param albumID path string true "ID albumu"
 // @Success 200 {array} models.Review
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
 // @Router /reviews/album/{albumID} [get]
 func GetReviewsByAlbumID(c *gin.Context) {
 	albumIDParam := c.Param("albumID")
@@ -114,13 +117,14 @@ func GetReviewsByAlbumID(c *gin.Context) {
 
 // GetReviewsByUserID godoc
 // @Summary Pobierz recenzje użytkownika
+// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Param userID path string true "ID użytkownika"
 // @Success 200 {array} models.Review
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /reviews/user/{userID} [get]
 func GetReviewsByUserID(c *gin.Context) {
 	userIDParam := c.Param("userID")
@@ -151,13 +155,14 @@ func GetReviewsByUserID(c *gin.Context) {
 
 // CreateReview godoc
 // @Summary Dodaj nową recenzję
+// @Security BearerAuth
 // @Tags Reviews
 // @Accept json
 // @Produce json
 // @Param review body models.Review true "Nowa recenzja"
 // @Success 201 {object} models.Review
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /reviews [post]
 func CreateReview(c *gin.Context) {
 	var review models.Review
@@ -193,15 +198,16 @@ func CreateReview(c *gin.Context) {
 
 // UpdateReview godoc
 // @Summary Zaktualizuj recenzję
+// @Security BearerAuth
 // @Tags Reviews
 // @Accept json
 // @Produce json
 // @Param id path string true "ID recenzji"
 // @Param review body models.Review true "Dane recenzji do aktualizacji"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /reviews/{id} [put]
 func UpdateReview(c *gin.Context) {
 	idParam := c.Param("id")
@@ -254,13 +260,14 @@ func UpdateReview(c *gin.Context) {
 
 // DeleteReview godoc
 // @Summary Usuń recenzję
+// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Param id path string true "ID recenzji"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /reviews/{id} [delete]
 func DeleteReview(c *gin.Context) {
 	idParam := c.Param("id")

@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"log"
 	"music-store-api/config"
+	"music-store-api/middleware"
 	"music-store-api/models"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func LoadTestData(c *gin.Context) {
@@ -19,38 +21,70 @@ func LoadTestData(c *gin.Context) {
 
 	db := config.DB
 
-	type FileData struct {
-		Filename   string
+	type LoadFile struct {
+		FilePath   string
 		Collection string
-		Model      interface{}
+		Data       interface{}
+		Process    func(interface{})
 	}
 
-	files := []FileData{
-		{"albums.json", "albums", &[]models.Album{}},
-		{"users.json", "users", &[]models.User{}},
-		{"orders.json", "orders", &[]models.Order{}},
-		{"carts.json", "carts", &[]models.Cart{}},
-		{"reviews.json", "reviews", &[]models.Review{}},
+	files := []LoadFile{
+		{
+			FilePath:   "data/albums.json",
+			Collection: "albums",
+			Data:       &[]models.Album{},
+			Process: func(data interface{}) {
+				albums := data.(*[]models.Album)
+				now := time.Now()
+				for i := range *albums {
+					(*albums)[i].ID = primitive.NewObjectID()
+					(*albums)[i].CreatedAt = now
+					(*albums)[i].UpdatedAt = now
+				}
+			},
+		},
+		{
+			FilePath:   "data/users.json",
+			Collection: "users",
+			Data:       &[]models.User{},
+			Process: func(data interface{}) {
+				users := data.(*[]models.User)
+				now := time.Now()
+				for i := range *users {
+					(*users)[i].ID = primitive.NewObjectID()
+					(*users)[i].CreatedAt = now
+					(*users)[i].UpdatedAt = now
+
+					hashed, err := middleware.HashPassword((*users)[i].Password)
+					if err != nil {
+						log.Printf("Błąd haszowania hasła użytkownika: %v", err)
+						(*users)[i].PasswordHash = ""
+					} else {
+						(*users)[i].PasswordHash = hashed
+					}
+
+					(*users)[i].Password = ""
+				}
+			},
+		},
 	}
 
 	for _, file := range files {
-		path := "data/" + file.Filename
-
-		byteValue, err := os.ReadFile(path)
+		byteValue, err := os.ReadFile(file.FilePath)
 		if err != nil {
-			log.Printf("Nie udało się otworzyć %s: %v", path, err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd odczytu pliku " + file.Filename})
+			log.Printf("Nie udało się otworzyć %s: %v", file.FilePath, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd odczytu pliku " + file.FilePath})
 			return
 		}
 
-		err = json.Unmarshal(byteValue, file.Model)
+		err = json.Unmarshal(byteValue, file.Data)
 		if err != nil {
-			log.Printf("Błąd dekodowania %s: %v", path, err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd dekodowania pliku " + file.Filename})
+			log.Printf("Błąd dekodowania %s: %v", file.FilePath, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd dekodowania pliku " + file.FilePath})
 			return
 		}
 
-		setTimestamps(file.Model)
+		file.Process(file.Data)
 
 		if err := db.Collection(file.Collection).Drop(ctx); err != nil {
 			log.Printf("Błąd przy czyszczeniu kolekcji %s: %v", file.Collection, err)
@@ -58,7 +92,7 @@ func LoadTestData(c *gin.Context) {
 			return
 		}
 
-		docs := toInterfaceSlice(file.Model)
+		docs := toInterfaceSlice(file.Data)
 		if len(docs) > 0 {
 			_, err := db.Collection(file.Collection).InsertMany(ctx, docs)
 			if err != nil {
@@ -83,43 +117,6 @@ func toInterfaceSlice(data interface{}) []interface{} {
 		for _, item := range *v {
 			res = append(res, item)
 		}
-	case *[]models.Order:
-		for _, item := range *v {
-			res = append(res, item)
-		}
-	case *[]models.Cart:
-		for _, item := range *v {
-			res = append(res, item)
-		}
-	case *[]models.Review:
-		for _, item := range *v {
-			res = append(res, item)
-		}
 	}
 	return res
-}
-
-func setTimestamps(data interface{}) {
-	now := time.Now()
-	switch v := data.(type) {
-	case *[]models.Album:
-		for i := range *v {
-			(*v)[i].CreatedAt = now
-			(*v)[i].UpdatedAt = now
-		}
-	case *[]models.User:
-		for i := range *v {
-			(*v)[i].CreatedAt = now
-			(*v)[i].UpdatedAt = now
-		}
-	case *[]models.Order:
-		for i := range *v {
-			(*v)[i].CreatedAt = now
-			(*v)[i].UpdatedAt = now
-		}
-	case *[]models.Review:
-		for i := range *v {
-			(*v)[i].CreatedAt = now
-		}
-	}
 }

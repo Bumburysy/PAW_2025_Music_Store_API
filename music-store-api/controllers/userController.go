@@ -24,6 +24,7 @@ func InitUserCollection() {
 
 // GetUsers godoc
 // @Summary Pobierz listę użytkowników
+// @Security BearerAuth
 // @Description Zwraca wszystkich użytkowników w systemie
 // @Tags Users
 // @Accept json
@@ -52,14 +53,15 @@ func GetUsers(c *gin.Context) {
 
 // GetUserByID godoc
 // @Summary Pobierz użytkownika po ID
+// @Security BearerAuth
 // @Description Zwraca szczegóły użytkownika na podstawie ID
 // @Tags Users
 // @Accept json
 // @Produce json
 // @Param id path string true "ID użytkownika"
 // @Success 200 {object} models.User
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
 // @Router /users/{id} [get]
 func GetUserByID(c *gin.Context) {
 	idParam := c.Param("id")
@@ -84,14 +86,15 @@ func GetUserByID(c *gin.Context) {
 
 // CreateUser godoc
 // @Summary Dodaj nowego użytkownika
+// @Security BearerAuth
 // @Description Tworzy nowego użytkownika w bazie
 // @Tags Users
 // @Accept json
 // @Produce json
 // @Param user body models.User true "Użytkownik do dodania"
 // @Success 201 {object} models.User
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /users [post]
 func CreateUser(c *gin.Context) {
 	var user models.User
@@ -101,7 +104,6 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	// Tu trzeba zahashować hasło (np. bcrypt) przed zapisaniem
 	hashedPassword, err := middleware.HashPassword(user.PasswordHash)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd haszowania hasła"})
@@ -125,16 +127,17 @@ func CreateUser(c *gin.Context) {
 
 // UpdateUser godoc
 // @Summary Aktualizuj użytkownika
+// @Security BearerAuth
 // @Description Aktualizuje dane użytkownika na podstawie ID
 // @Tags Users
 // @Accept json
 // @Produce json
 // @Param id path string true "ID użytkownika"
 // @Param user body models.User true "Zaktualizowane dane użytkownika"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /users/{id} [patch]
 func UpdateUser(c *gin.Context) {
 	idParam := c.Param("id")
@@ -186,15 +189,16 @@ func UpdateUser(c *gin.Context) {
 
 // DeleteUser godoc
 // @Summary Usuń użytkownika
+// @Security BearerAuth
 // @Description Usuwa użytkownika na podstawie ID
 // @Tags Users
 // @Accept json
 // @Produce json
 // @Param id path string true "ID użytkownika"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /users/{id} [delete]
 func DeleteUser(c *gin.Context) {
 	idParam := c.Param("id")

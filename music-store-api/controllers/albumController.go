@@ -36,7 +36,7 @@ func InitAlbumCollection() {
 // @Param genre query string false "Filtruj po gatunku muzycznym (częściowa zgodność, bez wielkości liter)"
 // @Param sort query string false "Sortowanie po polach (np. price,-title)"
 // @Success 200 {object} map[string]interface{} "Struktura danych zawiera: page, limit, total i data (lista albumów)"
-// @Failure 500 {object} map[string]string
+// @Failure 500 {object} models.ErrorResponse
 // @Router /albums [get]
 func GetAlbums(c *gin.Context) {
 	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -110,8 +110,8 @@ func GetAlbums(c *gin.Context) {
 // @Produce json
 // @Param id path string true "ID albumu"
 // @Success 200 {object} models.Album
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
 // @Router /albums/{id} [get]
 func GetAlbumByID(c *gin.Context) {
 	idParam := c.Param("id")
@@ -137,14 +137,15 @@ func GetAlbumByID(c *gin.Context) {
 
 // CreateAlbum godoc
 // @Summary Dodaj nowy album
+// @Security BearerAuth
 // @Description Dodaje album do bazy danych
 // @Tags Albums
 // @Accept json
 // @Produce json
 // @Param album body models.Album true "Album do dodania"
 // @Success 201 {object} models.Album
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /albums [post]
 func CreateAlbum(c *gin.Context) {
 	var album models.Album
@@ -170,14 +171,15 @@ func CreateAlbum(c *gin.Context) {
 
 // CreateAlbumsBulk godoc
 // @Summary Dodaj wiele albumów naraz
+// @Security BearerAuth
 // @Description Dodaje wiele albumów do bazy danych w jednym żądaniu
 // @Tags Albums
 // @Accept json
 // @Produce json
 // @Param albums body []models.Album true "Lista albumów do dodania"
 // @Success 201 {object} map[string]interface{} "Informacja o dodanych albumach i ich liczbie"
-// @Failure 400 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /albums/bulk [post]
 func CreateAlbumsBulk(c *gin.Context) {
 	var albums []models.Album
@@ -207,16 +209,17 @@ func CreateAlbumsBulk(c *gin.Context) {
 
 // UpdateAlbum godoc
 // @Summary Zaktualizuj album
+// @Security BearerAuth
 // @Description Aktualizuje dane albumu na podstawie ID
 // @Tags Albums
 // @Accept json
 // @Produce json
 // @Param id path string true "ID albumu"
 // @Param album body models.Album true "Zaktualizowane dane albumu"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /albums/{id} [patch]
 func UpdateAlbum(c *gin.Context) {
 	idParam := c.Param("id")
@@ -260,15 +263,16 @@ func UpdateAlbum(c *gin.Context) {
 
 // DeleteAlbum godoc
 // @Summary Usuń album
+// @Security BearerAuth
 // @Description Usuwa album na podstawie ID
 // @Tags Albums
 // @Accept json
 // @Produce json
 // @Param id path string true "ID albumu"
-// @Success 200 {object} map[string]string
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 500 {object} map[string]string
+// @Success 200 {object} models.SuccessResponse
+// @Failure 400 {object} models.ErrorResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
 // @Router /albums/{id} [delete]
 func DeleteAlbum(c *gin.Context) {
 	idParam := c.Param("id")
