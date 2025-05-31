@@ -1,4 +1,19 @@
 definitions:
+  controllers.LoginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: strongpassword
+        type: string
+    type: object
+  controllers.LoginResponse:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    type: object
   models.Album:
     properties:
       artist:
@@ -40,31 +55,11 @@ definitions:
         description: Data ostatniej aktualizacji
         type: string
     type: object
-  models.Cart:
+  models.ErrorResponse:
     properties:
-      id:
-        description: ID koszyka (unikalny identyfikator)
+      error:
+        description: Komunikat błędu
         type: string
-      items:
-        description: Lista pozycji w koszyku
-        items:
-          $ref: '#/definitions/models.CartItem'
-        type: array
-      total:
-        description: Sumaryczna wartości koszyka
-        type: number
-      user_id:
-        description: ID użytkownika, do którego należy koszyk
-        type: string
-    type: object
-  models.CartItem:
-    properties:
-      album_id:
-        description: ID albumu dodanego do koszyka
-        type: string
-      quantity:
-        description: Ilość sztuk albumu w koszyku
-        type: integer
     type: object
   models.Order:
     properties:
@@ -147,6 +142,12 @@ definitions:
         description: Kod pocztowy dostawy
         type: string
     type: object
+  models.SuccessResponse:
+    properties:
+      message:
+        description: Wiadomość o sukcesie
+        type: string
+    type: object
   models.User:
     properties:
       created_at:
@@ -181,8 +182,12 @@ definitions:
         description: Data ostatniej aktualizacji
         type: string
     type: object
+host: localhost:25565
 info:
   contact: {}
+  description: API do zarządzania sklepem muzycznym
+  title: Music Store API
+  version: "1.0"
 paths:
   /albums:
     get:
@@ -224,9 +229,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
       summary: Pobierz listę albumów
       tags:
       - Albums
@@ -251,15 +254,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Dodaj nowy album
       tags:
       - Albums
@@ -280,27 +281,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Usuń album
       tags:
       - Albums
@@ -324,15 +319,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
       summary: Pobierz album po ID
       tags:
       - Albums
@@ -358,27 +349,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Zaktualizuj album
       tags:
       - Albums
@@ -407,409 +392,46 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Dodaj wiele albumów naraz
       tags:
       - Albums
-  /carts:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Cart'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Pobierz wszystkie koszyki
-      tags:
-      - Carts
+  /login:
     post:
       consumes:
       - application/json
+      description: Zwraca token JWT po poprawnym zalogowaniu
       parameters:
-      - description: Nowy koszyk
+      - description: Dane logowania
         in: body
-        name: cart
+        name: credentials
         required: true
         schema:
-          $ref: '#/definitions/models.Cart'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/models.Cart'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Utwórz nowy koszyk
-      tags:
-      - Carts
-  /carts/{cartID}/items:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: cartID
-        required: true
-        type: string
-      - description: Pozycja do dodania
-        in: body
-        name: item
-        required: true
-        schema:
-          $ref: '#/definitions/models.CartItem'
+          $ref: '#/definitions/controllers.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/controllers.LoginResponse'
         "400":
-          description: Bad Request
+          description: Niepoprawne dane
           schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Błędne dane logowania
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Dodaj pozycję do koszyka lub zaktualizuj ilość
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Logowanie użytkownika
       tags:
-      - Carts
-  /carts/{cartID}/items/{albumID}:
-    delete:
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: cartID
-        required: true
-        type: string
-      - description: ID albumu
-        in: path
-        name: albumID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Usuń pozycję z koszyka
-      tags:
-      - Carts
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: cartID
-        required: true
-        type: string
-      - description: ID albumu
-        in: path
-        name: albumID
-        required: true
-        type: string
-      - description: Nowa ilość
-        in: body
-        name: quantity
-        required: true
-        schema:
-          additionalProperties:
-            type: string
-          type: object
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Zaktualizuj ilość pozycji w koszyku
-      tags:
-      - Carts
-  /carts/{cartID}/total:
-    put:
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: cartID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Cart'
-        "400":
-          description: Niepoprawne ID koszyka
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Koszyk nie znaleziony
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Błąd serwera podczas pobierania lub aktualizacji danych
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Oblicz i zaktualizuj sumę wartości koszyka
-      tags:
-      - Carts
-  /carts/{id}:
-    delete:
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Usuń koszyk
-      tags:
-      - Carts
-    get:
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Cart'
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Pobierz koszyk po ID
-      tags:
-      - Carts
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Dane koszyka
-        in: body
-        name: cart
-        required: true
-        schema:
-          $ref: '#/definitions/models.Cart'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Zaktualizuj koszyk
-      tags:
-      - Carts
-  /carts/{id}/clear:
-    post:
-      parameters:
-      - description: ID koszyka
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Wyczyść koszyk (usuń wszystkie pozycje i zresetuj sumę)
-      tags:
-      - Carts
-  /carts/user/{userID}:
-    get:
-      parameters:
-      - description: ID użytkownika
-        in: path
-        name: userID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Cart'
-        "404":
-          description: Not Found
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Pobierz koszyk użytkownika
-      tags:
-      - Carts
+      - Auth
   /orders:
     get:
       produces:
@@ -824,9 +446,9 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz wszystkie zamówienia
       tags:
       - Orders
@@ -850,15 +472,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Utwórz nowe zamówienie
       tags:
       - Orders
@@ -876,27 +496,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Usuń zamówienie
       tags:
       - Orders
@@ -917,15 +531,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz zamówienie po ID
       tags:
       - Orders
@@ -950,27 +562,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Zaktualizuj zamówienie (np. status)
       tags:
       - Orders
@@ -996,27 +602,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Zaktualizuj dane wysyłki zamówienia
       tags:
       - Orders
@@ -1044,27 +644,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Zaktualizuj status zamówienia
       tags:
       - Orders
@@ -1088,9 +682,9 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz zamówienia użytkownika
       tags:
       - Orders
@@ -1102,15 +696,13 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/models.Review'
-            type: array
+            $ref: '#/definitions/models.Review'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz wszystkie recenzje
       tags:
       - Reviews
@@ -1134,15 +726,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Dodaj nową recenzję
       tags:
       - Reviews
@@ -1160,27 +750,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Usuń recenzję
       tags:
       - Reviews
@@ -1201,15 +785,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz recenzję po ID
       tags:
       - Reviews
@@ -1234,27 +816,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Zaktualizuj recenzję
       tags:
       - Reviews
@@ -1278,15 +854,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz recenzje dla konkretnego albumu
       tags:
       - Reviews
@@ -1310,21 +884,17 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz recenzje użytkownika
       tags:
       - Reviews
@@ -1342,6 +912,8 @@ paths:
             items:
               $ref: '#/definitions/models.User'
             type: array
+      security:
+      - BearerAuth: []
       summary: Pobierz listę użytkowników
       tags:
       - Users
@@ -1366,15 +938,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Dodaj nowego użytkownika
       tags:
       - Users
@@ -1395,27 +965,21 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Usuń użytkownika
       tags:
       - Users
@@ -1439,15 +1003,13 @@ paths:
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Pobierz użytkownika po ID
       tags:
       - Users
@@ -1473,28 +1035,27 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.SuccessResponse'
         "400":
           description: Bad Request
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
       summary: Aktualizuj użytkownika
       tags:
       - Users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
