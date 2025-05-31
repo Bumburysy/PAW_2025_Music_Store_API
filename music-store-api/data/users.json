@@ -1,17 +1,13 @@
 [
   {
-    "_id": { "$oid": "642d3f3a9f1a4e1b6c000001" },
     "first_name": "Jan",
     "last_name": "Kowalski",
     "email": "jan.kowalski@example.com",
     "phone_number": "+48123456789",
-    "password_hash": "hashedpassword1",
+    "password": "password1",
     "role": "admin",
-    "created_at": "2024-05-30T10:00:00Z",
-    "updated_at": "2025-05-30T10:00:00Z",
     "is_active": true,
     "shipping_details": {
-      "full_name": "Jan Kowalski",
       "address": "ul. Kwiatowa 10",
       "city": "Warszawa",
       "postal_code": "00-001",
@@ -20,18 +16,14 @@
     }
   },
   {
-    "_id": { "$oid": "642d3f3a9f1a4e1b6c000002" },
     "first_name": "Anna",
     "last_name": "Nowak",
     "email": "anna.nowak@example.com",
     "phone_number": "+48123456780",
-    "password_hash": "hashedpassword2",
+    "password": "password2",
     "role": "employee",
-    "created_at": "2023-05-30T10:00:00Z",
-    "updated_at": "2025-05-30T10:00:00Z",
     "is_active": true,
     "shipping_details": {
-      "full_name": "Anna Nowak",
       "address": "ul. Zielona 5",
       "city": "Kraków",
       "postal_code": "30-001",
@@ -40,18 +32,14 @@
     }
   },
   {
-    "_id": { "$oid": "642d3f3a9f1a4e1b6c000003" },
     "first_name": "Michał",
     "last_name": "Wiśniewski",
     "email": "michal.wisniewski@example.com",
     "phone_number": "+48123456781",
-    "password_hash": "hashedpassword3",
+    "password": "password3",
     "role": "customer",
-    "created_at": "2023-11-30T10:00:00Z",
-    "updated_at": "2025-05-30T10:00:00Z",
     "is_active": true,
     "shipping_details": {
-      "full_name": "Michał Wiśniewski",
       "address": "ul. Słoneczna 7",
       "city": "Gdańsk",
       "postal_code": "80-001",
@@ -60,18 +48,14 @@
     }
   },
   {
-    "_id": { "$oid": "642d3f3a9f1a4e1b6c000004" },
     "first_name": "Ewa",
     "last_name": "Kaczmarek",
     "email": "ewa.kaczmarek@example.com",
     "phone_number": "+48123456782",
-    "password_hash": "hashedpassword4",
+    "password": "password4",
     "role": "customer",
-    "created_at": "2022-05-30T10:00:00Z",
-    "updated_at": "2025-05-30T10:00:00Z",
     "is_active": false,
     "shipping_details": {
-      "full_name": "Ewa Kaczmarek",
       "address": "ul. Lipowa 12",
       "city": "Poznań",
       "postal_code": "60-001",
