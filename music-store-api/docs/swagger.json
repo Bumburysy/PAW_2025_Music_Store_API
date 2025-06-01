@@ -1,12 +1,22 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "API do zarządzania sklepem muzycznym",
-        "title": "Music Store API",
-        "contact": {},
+        "description": "Music Store REST API to backendowy serwis RESTful do zarządzania zasobami internetowego sklepu muzycznego. Umożliwia zarządzanie albumami, użytkownikami, recenzjami, zamówieniami oraz procesami uwierzytelniania i autoryzacji. API zostało zaprojektowane do współpracy z frontendem aplikacji oraz systemami zewnętrznymi.",
+        "title": "Music Store REST API",
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "Zespół Wsparcia Music Store",
+            "url": "http://example.com/support",
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        },
         "version": "1.0"
     },
-    "host": "localhost:25565",
+    "host": "193.28.226.78:25565",
+    "basePath": "/",
     "paths": {
         "/albums": {
             "get": {
@@ -328,6 +338,43 @@
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/load": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Wczytuje dane z plików JSON i wstawia je do kolekcji MongoDB.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data"
+                ],
+                "summary": "Ładowanie danych testowych",
+                "responses": {
+                    "200": {
+                        "description": "Dane zostały wczytane",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Błąd serwera lub pliku danych",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -788,11 +835,6 @@
         },
         "/reviews": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -866,11 +908,6 @@
         },
         "/reviews/album/{albumID}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -914,11 +951,6 @@
         },
         "/reviews/user/{userID}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -968,11 +1000,6 @@
         },
         "/reviews/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1605,6 +1632,10 @@
                     "description": "Nazwisko użytkownika",
                     "type": "string"
                 },
+                "password": {
+                    "description": "Hasło",
+                    "type": "string"
+                },
                 "phoneNumber": {
                     "description": "Numer telefonu",
                     "type": "string"
@@ -1630,6 +1661,7 @@
     },
     "securityDefinitions": {
         "BearerAuth": {
+            "description": "Token JWT w formacie \"Bearer \u003ctoken\u003e\", wymagany do autoryzacji endpointów chronionych.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

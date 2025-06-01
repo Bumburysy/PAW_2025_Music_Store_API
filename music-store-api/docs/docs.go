@@ -9,7 +9,16 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "Zespół Wsparcia Music Store",
+            "url": "http://example.com/support",
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -335,6 +344,43 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/data/load": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Wczytuje dane z plików JSON i wstawia je do kolekcji MongoDB.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Data"
+                ],
+                "summary": "Ładowanie danych testowych",
+                "responses": {
+                    "200": {
+                        "description": "Dane zostały wczytane",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Błąd serwera lub pliku danych",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -795,11 +841,6 @@ const docTemplate = `{
         },
         "/reviews": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -873,11 +914,6 @@ const docTemplate = `{
         },
         "/reviews/album/{albumID}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -921,11 +957,6 @@ const docTemplate = `{
         },
         "/reviews/user/{userID}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -975,11 +1006,6 @@ const docTemplate = `{
         },
         "/reviews/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1612,6 +1638,10 @@ const docTemplate = `{
                     "description": "Nazwisko użytkownika",
                     "type": "string"
                 },
+                "password": {
+                    "description": "Hasło",
+                    "type": "string"
+                },
                 "phoneNumber": {
                     "description": "Numer telefonu",
                     "type": "string"
@@ -1637,6 +1667,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "BearerAuth": {
+            "description": "Token JWT w formacie \"Bearer \u003ctoken\u003e\", wymagany do autoryzacji endpointów chronionych.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -1647,11 +1678,11 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:25565",
-	BasePath:         "",
+	Host:             "193.28.226.78:25565",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "Music Store API",
-	Description:      "API do zarządzania sklepem muzycznym",
+	Title:            "Music Store REST API",
+	Description:      "Music Store REST API to backendowy serwis RESTful do zarządzania zasobami internetowego sklepu muzycznego. Umożliwia zarządzanie albumami, użytkownikami, recenzjami, zamówieniami oraz procesami uwierzytelniania i autoryzacji. API zostało zaprojektowane do współpracy z frontendem aplikacji oraz systemami zewnętrznymi.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

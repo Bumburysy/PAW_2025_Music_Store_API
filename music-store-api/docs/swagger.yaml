@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   controllers.LoginRequest:
     properties:
@@ -168,6 +169,9 @@ definitions:
       last_name:
         description: Nazwisko użytkownika
         type: string
+      password:
+        description: Hasło
+        type: string
       phoneNumber:
         description: Numer telefonu
         type: string
@@ -182,11 +186,21 @@ definitions:
         description: Data ostatniej aktualizacji
         type: string
     type: object
-host: localhost:25565
+host: 193.28.226.78:25565
 info:
-  contact: {}
-  description: API do zarządzania sklepem muzycznym
-  title: Music Store API
+  contact:
+    email: support@example.com
+    name: Zespół Wsparcia Music Store
+    url: http://example.com/support
+  description: Music Store REST API to backendowy serwis RESTful do zarządzania zasobami
+    internetowego sklepu muzycznego. Umożliwia zarządzanie albumami, użytkownikami,
+    recenzjami, zamówieniami oraz procesami uwierzytelniania i autoryzacji. API zostało
+    zaprojektowane do współpracy z frontendem aplikacji oraz systemami zewnętrznymi.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://example.com/terms/
+  title: Music Store REST API
   version: "1.0"
 paths:
   /albums:
@@ -402,6 +416,29 @@ paths:
       summary: Dodaj wiele albumów naraz
       tags:
       - Albums
+  /data/load:
+    post:
+      description: Wczytuje dane z plików JSON i wstawia je do kolekcji MongoDB.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Dane zostały wczytane
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Błąd serwera lub pliku danych
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Ładowanie danych testowych
+      tags:
+      - Data
   /login:
     post:
       consumes:
@@ -701,8 +738,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - BearerAuth: []
       summary: Pobierz wszystkie recenzje
       tags:
       - Reviews
@@ -790,8 +825,6 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - BearerAuth: []
       summary: Pobierz recenzję po ID
       tags:
       - Reviews
@@ -859,8 +892,6 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - BearerAuth: []
       summary: Pobierz recenzje dla konkretnego albumu
       tags:
       - Reviews
@@ -893,8 +924,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      security:
-      - BearerAuth: []
       summary: Pobierz recenzje użytkownika
       tags:
       - Reviews
@@ -1055,6 +1084,8 @@ paths:
       - Users
 securityDefinitions:
   BearerAuth:
+    description: Token JWT w formacie "Bearer <token>", wymagany do autoryzacji endpointów
+      chronionych.
     in: header
     name: Authorization
     type: apiKey
