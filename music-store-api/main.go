@@ -11,16 +11,21 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title Music Store API
+// @title Music Store REST API
 // @version 1.0
-// @description API do zarządzania sklepem muzycznym
-
-// @host localhost:25565
-
+// @description Music Store REST API to backendowy serwis RESTful do zarządzania zasobami internetowego sklepu muzycznego. Umożliwia zarządzanie albumami, użytkownikami, recenzjami, zamówieniami oraz procesami uwierzytelniania i autoryzacji. API zostało zaprojektowane do współpracy z frontendem aplikacji oraz systemami zewnętrznymi.
+// @termsOfService http://example.com/terms/
+// @contact.name Zespół Wsparcia Music Store
+// @contact.url http://example.com/support
+// @contact.email support@example.com
+// @license.name MIT License
+// @license.url https://opensource.org/licenses/MIT
+// @host 193.28.226.78:25565
+// @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
-
+// @description Token JWT w formacie "Bearer <token>", wymagany do autoryzacji endpointów chronionych.
 func main() {
 	config.ConnectDB()
 	defer config.DisconnectDB()
@@ -32,8 +37,6 @@ func main() {
 
 	r := gin.Default()
 
-	r.POST("/login", controllers.Login)
-
 	r.Static("/static", "./static")
 	r.GET("/", func(c *gin.Context) {
 		c.File("./static/index.html")
@@ -41,55 +44,56 @@ func main() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	r.POST("/login", controllers.Login)
+
 	albumRoutes := r.Group("/albums")
 	albumRoutes.GET("", controllers.GetAlbums)
 	albumRoutes.GET("/:id", controllers.GetAlbumByID)
-
 	albumRoutes.Use(middleware.AuthMiddleware())
 	{
-		albumRoutes.POST("", controllers.CreateAlbum)
-		albumRoutes.POST("/bulk", controllers.CreateAlbumsBulk)
-		albumRoutes.PATCH("/:id", controllers.UpdateAlbum)
-		albumRoutes.DELETE("/:id", controllers.DeleteAlbum)
+		albumRoutes.POST("", middleware.RoleMiddleware("employee", "admin"), controllers.CreateAlbum)
+		albumRoutes.POST("/bulk", middleware.RoleMiddleware("employee", "admin"), controllers.CreateAlbumsBulk)
+		albumRoutes.PATCH("/:id", middleware.RoleMiddleware("employee", "admin"), controllers.UpdateAlbum)
+		albumRoutes.DELETE("/:id", middleware.RoleMiddleware("employee", "admin"), controllers.DeleteAlbum)
 	}
 
 	userRoutes := r.Group("/users")
 	userRoutes.Use(middleware.AuthMiddleware())
 	{
-		userRoutes.GET("", controllers.GetUsers)
-		userRoutes.GET("/:id", controllers.GetUserByID)
-		userRoutes.POST("", controllers.CreateUser)
-		userRoutes.PATCH("/:id", controllers.UpdateUser)
-		userRoutes.DELETE("/:id", controllers.DeleteUser)
+		userRoutes.GET("", middleware.RoleMiddleware("admin"), controllers.GetUsers)
+		userRoutes.GET("/:id", middleware.RoleMiddleware("admin"), controllers.GetUserByID)
+		userRoutes.POST("", middleware.RoleMiddleware("admin"), controllers.CreateUser)
+		userRoutes.PATCH("/:id", middleware.RoleMiddleware("admin"), controllers.UpdateUser)
+		userRoutes.DELETE("/:id", middleware.RoleMiddleware("admin"), controllers.DeleteUser)
 	}
 
 	orderRoutes := r.Group("/orders")
 	orderRoutes.Use(middleware.AuthMiddleware())
 	{
-		orderRoutes.GET("/", controllers.GetOrders)
-		orderRoutes.GET("/:id", controllers.GetOrderByID)
-		orderRoutes.GET("/user/:userID", controllers.GetOrdersByUserID)
-		orderRoutes.POST("/", controllers.CreateOrder)
-		orderRoutes.PUT("/:id", controllers.UpdateOrder)
-		orderRoutes.DELETE("/:id", controllers.DeleteOrder)
-		orderRoutes.PATCH("/:id/status", controllers.UpdateOrderStatus)
-		orderRoutes.PUT("/:id/shipping", controllers.UpdateOrderShipping)
+		orderRoutes.GET("/", middleware.RoleMiddleware("employee", "admin"), controllers.GetOrders)
+		orderRoutes.GET("/:id", middleware.RoleMiddleware("employee", "admin"), controllers.GetOrderByID)
+		orderRoutes.GET("/user/:userID", middleware.RoleMiddleware("employee", "admin"), controllers.GetOrdersByUserID)
+		orderRoutes.POST("/", middleware.RoleMiddleware("customer", "employee", "admin"), controllers.CreateOrder)
+		orderRoutes.PUT("/:id", middleware.RoleMiddleware("employee", "admin"), controllers.UpdateOrder)
+		orderRoutes.DELETE("/:id", middleware.RoleMiddleware("admin"), controllers.DeleteOrder)
+		orderRoutes.PATCH("/:id/status", middleware.RoleMiddleware("employee", "admin"), controllers.UpdateOrderStatus)
+		orderRoutes.PUT("/:id/shipping", middleware.RoleMiddleware("employee", "admin"), controllers.UpdateOrderShipping)
 	}
 
 	reviewRoutes := r.Group("/reviews")
+	reviewRoutes.GET("/album/:albumID", controllers.GetReviewsByAlbumID)
+	reviewRoutes.GET("/user/:userID", controllers.GetReviewsByUserID)
+	reviewRoutes.GET("/:id", controllers.GetReviewByID)
+	reviewRoutes.GET("", controllers.GetReviews)
 	reviewRoutes.Use(middleware.AuthMiddleware())
 	{
-		reviewRoutes.GET("/album/:albumID", controllers.GetReviewsByAlbumID)
-		reviewRoutes.GET("/user/:userID", controllers.GetReviewsByUserID)
-		reviewRoutes.GET("/:id", controllers.GetReviewByID)
-		reviewRoutes.GET("", controllers.GetReviews)
-		reviewRoutes.POST("", controllers.CreateReview)
-		reviewRoutes.PUT("/:id", controllers.UpdateReview)
-		reviewRoutes.DELETE("/:id", controllers.DeleteReview)
+		reviewRoutes.POST("", middleware.RoleMiddleware("customer", "employee", "admin"), controllers.CreateReview)
+		reviewRoutes.PUT("/:id", middleware.RoleMiddleware("customer", "employee", "admin"), controllers.UpdateReview)
+		reviewRoutes.DELETE("/:id", middleware.RoleMiddleware("employee", "admin"), controllers.DeleteReview)
 	}
 
 	dataRoutes := r.Group("/data")
-	//dataRoutes.Use(middleware.AuthMiddleware())
+	dataRoutes.Use(middleware.AuthMiddleware(), middleware.RoleMiddleware("admin"))
 	{
 		dataRoutes.POST("/load", controllers.LoadTestData)
 	}
