@@ -15,6 +15,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// LoadTestData ładuje dane testowe do bazy danych.
+// @Summary Ładowanie danych testowych
+// @Description Wczytuje dane z plików JSON i wstawia je do kolekcji MongoDB.
+// @Tags Data
+// @Produce json
+// @Security ApiKeyAuth
+// @Success 200 {object} map[string]string "Dane zostały wczytane"
+// @Failure 500 {object} map[string]string "Błąd serwera lub pliku danych"
+// @Router /data/load [post]
 func LoadTestData(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
