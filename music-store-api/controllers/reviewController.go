@@ -21,7 +21,6 @@ func InitReviewCollection() {
 
 // GetReviews godoc
 // @Summary Pobierz wszystkie recenzje
-// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Success 200 {object} models.Review
@@ -49,7 +48,6 @@ func GetReviews(c *gin.Context) {
 
 // GetReviewByID godoc
 // @Summary Pobierz recenzję po ID
-// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Param id path string true "ID recenzji"
@@ -80,7 +78,6 @@ func GetReviewByID(c *gin.Context) {
 
 // GetReviewsByAlbumID godoc
 // @Summary Pobierz recenzje dla konkretnego albumu
-// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Param albumID path string true "ID albumu"
@@ -117,7 +114,6 @@ func GetReviewsByAlbumID(c *gin.Context) {
 
 // GetReviewsByUserID godoc
 // @Summary Pobierz recenzje użytkownika
-// @Security BearerAuth
 // @Tags Reviews
 // @Produce json
 // @Param userID path string true "ID użytkownika"
