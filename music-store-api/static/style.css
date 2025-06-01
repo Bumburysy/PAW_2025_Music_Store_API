@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
     scroll-behavior: smooth;
+    scroll-padding-top: 77px;
 }
 
 body {
@@ -15,9 +16,9 @@ body {
     align-items: center;
 }
 
-header, footer {
+header, footer, nav {
     background-color: #111;
-    padding: 2rem 1rem;
+    padding: 8px;
     width: 100%;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 255, 0, 0.1);
@@ -28,17 +29,32 @@ header, footer p {
     color: #ffffff;
 }
 
+header p {
+    width: auto;
+    padding: 8px;
+    margin: 0px;
+    border-bottom: 2px solid #4CAF50;
+    border-top: 2px solid #4CAF50;
+}
+
 header h1 {
     font-size: 2rem;
-    margin-bottom: 1rem;
     color: #00e676;
+    padding-bottom: 8px;
 }
 
-header nav {
-    margin-top: 2rem;
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    padding: 0;
+    padding-bottom: 8px;
 }
 
-header nav a {
+a {
     color: #00e676;
     text-decoration: none;
     font-weight: bold;
@@ -48,13 +64,31 @@ header nav a {
     transition: background-color 0.3s, transform 0.2s;
 }
 
-header nav a:hover {
+a:hover {
     background-color: #2e2e2e;
     transform: scale(1.05);
 }
 
 footer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
     box-shadow: 0 -4px 8px rgba(0, 255, 0, 0.1);
+}
+
+footer p {
+    margin-bottom: 0;
+    padding: 4px;
+}
+
+footer a {
+    color: #00e676;
+    margin: 0;
+    padding: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
 }
 
 main {
@@ -63,16 +97,55 @@ main {
     flex-direction: column;
     width: 100%;
     max-width: 85%;
-    padding: 2rem;
     margin: 2rem auto;
 }
 
-#endpointy div{
+h2 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    color:  #00e676;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 8px;
+}
+
+p {
+    font-size: 1em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 25px;
+    margin-bottom: 0;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+ul li {
+    padding: 4px;
+    font-size: 1em;
+}
+
+pre code.json {
+    background-color: #1e1e1e;
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: block;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95em;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-bottom: 15px;
+}
+
+#iframe div{
     padding: 0;
     height: 100%;
 }
 
-#endpointy iframe {
+#iframe iframe {
     width: 100%;
     min-height: 150vh;
     height: 100%;
@@ -81,15 +154,6 @@ main {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
     background-color: #1e1e1e;
-}
-
-section {
-    margin-bottom: 2rem;
-}
-
-section h2 {
-    color: #00e676;
-    margin-bottom: 1rem;
 }
 
 div {
