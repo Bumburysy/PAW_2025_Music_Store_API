@@ -31,3 +31,25 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func RoleMiddleware(allowedRoles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		roleVal, exists := c.Get("userRole")
+		if !exists {
+			c.JSON(http.StatusForbidden, models.ErrorResponse{Error: "Brak danych roli w tokenie"})
+			c.Abort()
+			return
+		}
+
+		userRole := roleVal.(string)
+		for _, role := range allowedRoles {
+			if userRole == role {
+				c.Next()
+				return
+			}
+		}
+
+		c.JSON(http.StatusForbidden, models.ErrorResponse{Error: "Brak uprawnień do wykonania tej operacji"})
+		c.Abort()
+	}
+}
