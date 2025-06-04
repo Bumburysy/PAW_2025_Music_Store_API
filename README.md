@@ -2,11 +2,6 @@
 
 http://193.28.226.78:25565/
 
-## ToDoList
-- Dodać dane testowe dla orders i reviews - problem z połączeniem z danymi od users i albums
-- Poprawić dokumentację Swaggera - usunąć niepotrzbne pola generowane automatycznie (może DTO dodać???)
-- Dodać testy Postman
-
 ## 📚 Opis funkcjonalny i technologiczny
 
 ### 1. Przeznaczenie API
