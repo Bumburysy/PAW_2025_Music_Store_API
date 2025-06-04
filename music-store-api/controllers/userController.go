@@ -104,7 +104,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	hashedPassword, err := middleware.HashPassword(user.PasswordHash)
+	hashedPassword, err := middleware.HashPassword(user.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd haszowania hasła"})
 		return
@@ -112,6 +112,8 @@ func CreateUser(c *gin.Context) {
 	user.PasswordHash = hashedPassword
 
 	user.ID = primitive.NewObjectID()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -122,7 +124,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, user)
+	c.JSON(http.StatusCreated, gin.H{"_id": user.ID.Hex()})
 }
 
 // UpdateUser godoc
@@ -162,11 +164,13 @@ func UpdateUser(c *gin.Context) {
 			"last_name":  user.LastName,
 			"email":      user.Email,
 			"role":       user.Role,
+			"password":   user.Password,
+			"updated_at": time.Now(),
 		},
 	}
 
-	if user.PasswordHash != "" {
-		hashedPassword, err := middleware.HashPassword(user.PasswordHash)
+	if user.Password != "" {
+		hashedPassword, err := middleware.HashPassword(user.Password)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Błąd haszowania hasła"})
 			return
