@@ -435,6 +435,7 @@ paths:
               type: string
             type: object
       security:
+      - BearerAuth: []
       - ApiKeyAuth: []
       summary: Ładowanie danych testowych
       tags:
