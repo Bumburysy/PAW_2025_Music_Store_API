@@ -5,6 +5,7 @@ import (
 	"music-store-api/controllers"
 	_ "music-store-api/docs"
 	"music-store-api/middleware"
+	"music-store-api/tests"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -97,6 +98,8 @@ func main() {
 	{
 		dataRoutes.POST("/load", controllers.LoadTestData)
 	}
+
+	r.GET("/run-tests", tests.RunTestsHandler)
 
 	r.Run(":25565")
 }
