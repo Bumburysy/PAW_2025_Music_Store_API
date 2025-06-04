@@ -156,6 +156,8 @@ func CreateAlbum(c *gin.Context) {
 	}
 
 	album.ID = primitive.NewObjectID()
+	album.CreatedAt = time.Now()
+	album.UpdatedAt = time.Now()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -166,7 +168,7 @@ func CreateAlbum(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, album)
+	c.JSON(http.StatusCreated, gin.H{"_id": album.ID.Hex()})
 }
 
 // CreateAlbumsBulk godoc
@@ -190,8 +192,11 @@ func CreateAlbumsBulk(c *gin.Context) {
 	}
 
 	var docs []interface{}
+	now := time.Now()
 	for _, album := range albums {
 		album.ID = primitive.NewObjectID()
+		album.CreatedAt = now
+		album.UpdatedAt = now
 		docs = append(docs, album)
 	}
 
@@ -240,11 +245,12 @@ func UpdateAlbum(c *gin.Context) {
 
 	update := bson.M{
 		"$set": bson.M{
-			"title":    album.Title,
-			"artist":   album.Artist,
-			"price":    album.Price,
-			"genre":    album.Genre,
-			"quantity": album.Quantity,
+			"title":      album.Title,
+			"artist":     album.Artist,
+			"price":      album.Price,
+			"genre":      album.Genre,
+			"quantity":   album.Quantity,
+			"updated_at": time.Now(),
 		},
 	}
 
