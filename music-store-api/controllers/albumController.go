@@ -245,12 +245,16 @@ func UpdateAlbum(c *gin.Context) {
 
 	update := bson.M{
 		"$set": bson.M{
-			"title":      album.Title,
-			"artist":     album.Artist,
-			"price":      album.Price,
-			"genre":      album.Genre,
-			"quantity":   album.Quantity,
-			"updated_at": time.Now(),
+			"title":        album.Title,
+			"artist":       album.Artist,
+			"price":        album.Price,
+			"genre":        album.Genre,
+			"quantity":     album.Quantity,
+			"tracks":       album.Tracks,
+			"description":  album.Description,
+			"cover_url":    album.CoverURL,
+			"release_date": album.ReleaseDate,
+			"updated_at":   time.Now(),
 		},
 	}
 
