@@ -99,6 +99,7 @@ func main() {
 		dataRoutes.POST("/load", controllers.LoadTestData)
 	}
 
+	//curl http://193.28.226.78:25565/run-tests
 	r.GET("/run-tests", tests.RunTestsHandler)
 
 	r.Run(":25565")
