@@ -1,62 +1,112 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-theme="dark">
     <head>
         <meta charset="UTF-8">
-        <title>🎵 Music Store REST API 🎵</title>
-        <link rel="stylesheet" href="/static/style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="/static/logo.png" type="image/x-icon">
+        <title>Music Store REST API</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/static/style.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <script src="/static/scripts.js"></script>
     </head>
+
     <body>
-        <header id="top">
-            <h1>🎵 Music Store REST API 🎵</h1>
-            <p>REST API dla sklepu muzycznego, umożliwiające przeglądanie dostępnych albumów, zarządzanie ofertą i stanami magazynowymi.</p>
+        <header id="main-header">
+            <img src="/static/logo.png" alt="Logo" />
+            <h1><i class="fa-solid fa-headphones"></i> Music Store REST API <i class="fa-solid fa-headphones"></i></h1>
+            <h2>REST API dla sklepu muzycznego, umożliwiające przeglądanie dostępnych albumów, zarządzanie ofertą, użytkownikami i stanami magazynowymi.</h2>
         </header>
-            <nav>
-                <a href="#opis">Przeznaczenie</a>
-                <a href="#autoryzacja">Autoryzacja</a>
-                <a href="#endpointy">Endpointy</a>
-                <a href="#model">Model Danych</a>
-                <a href="#iframe">Swagger</a>
-                <a href="/swagger/index.html#/albums">Dokumentacja API (Swagger UI)</a>
-                <a href="https://github.com/Bumburysy/PAW_2025_Music_Store_API">Repozytorium</a>
-                <a href="#top">⬆️</a>
-            </nav>
+
+        <div id="preloader">
+            <div class="loader">
+                <img src="/static/logo.png" alt="Logo">
+            </div>
+        </div>
+
+        <div id="topbar">
+            <button id="menu-toggle">☰</button>
+            <aside id="sidebar">
+                <nav>
+                    <a href="#opis" role="button">Przeznaczenie</a>
+                    <a href="#autoryzacja" role="button">Autoryzacja</a>
+                    <a href="#endpointy" role="button">Endpointy</a>
+                    <a href="#model" role="button">Model Danych</a>
+                    <a href="#iframe" role="button">Swagger</a>
+                    <a href="/swagger/index.html#/albums" role="button">Dokumentacja API (Swagger UI)</a>
+                    <a href="https://github.com/Bumburysy/PAW_2025_Music_Store_API" role="button">Repozytorium</a>
+                </nav>
+            </aside>
+
+            <div class="topbar-search">
+                <input type="text" id="search-input" placeholder="Szukaj..." />
+                <button id="search-button" title="Szukaj"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+
+            <img src="/static/logo.png" alt="Logo"/>
+
+            <div id="topbar-buttons">
+                <button id="toggle-theme" title="Zmień motyw">
+                <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="toggle-particles" title="Włącz/wyłącz iskierki">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </button>
+                <button id="back-to-top" title="Do góry">
+                <i class="fa-solid fa-arrow-up"></i>
+                </button>
+                <button id="toggle-music" title="Włącz/wyłącz muzykę">
+                <i class="fa-solid fa-music"></i>
+                </button>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" title="Głośność" />
+            </div>
+        </div>
+
         <main>
             <section id="opis">
-                <h2>Przeznaczenie REST API</h2>
-                <div>
-                    <p>Music Store API służy jako backendowy serwis RESTful, umożliwiający zarządzanie zasobami związanymi z internetowym sklepem muzycznym. Umożliwia zarządzanie danymi takimi jak albumy muzyczne, użytkownicy, recenzje, zamówienia, a także procesy związane z uwierzytelnianiem i autoryzacją użytkowników. API zostało zaprojektowane do współpracy z frontendową częścią aplikacji lub zewnętrznymi systemami integrującymi.</p>
-                    <p>System umożliwia:</p>
-                    <ul>
-                        <li>Obsługę albumów muzycznych – dodawanie, przeglądanie, aktualizowanie i usuwanie albumów.</li>
-                        <li>Rejestrację i zarządzanie użytkownikami – tworzenie kont, przeglądanie danych użytkowników, edycję, usuwanie i zarządzanie rolami użytkowników.</li>
-                        <li>Zarządzanie zamówieniami – tworzenie zamówień, przeglądanie historii, edytowanie statusów oraz zarządzanie danymi wysyłki.</li>
-                        <li>Moderację recenzji – dodawanie, przeglądanie, edytowanie i usuwanie recenzji użytkowników.</li>
-                        <li>Uwierzytelnianie i autoryzację – umożliwiające logowanie użytkowników oraz kontrolę dostępu na podstawie przypisanej roli (np. administrator, użytkownik).</li>
-                        <li>Wczytywanie danych testowych – szybkie ładowanie przykładowych danych (np. albumów, użytkowników) z plików JSON do bazy danych.</li>
-                        <li>Interaktywną dokumentację – generowaną na podstawie definicji OpenAPI (Swagger), umożliwiającą testowanie endpointów bezpośrednio z poziomu przeglądarki.</li>
-                    </ul>
-                    <p>Wykorzystane Technologie:</p>
-                    <ul>
-                        <li>Go</li>
-                        <li>GIN</li>
-                        <li>MongoDB</li>
-                        <li>HTML5</li>
-                        <li>CSS3</li>
-                    </ul>
+                <div id="content">
+                    <h2><i class="fa-solid fa-circle-info"></i> Przeznaczenie REST API</h2>
+                    <div>
+                        <p>Music Store API służy jako backendowy serwis RESTful, umożliwiający zarządzanie zasobami związanymi z internetowym sklepem muzycznym. Umożliwia zarządzanie danymi takimi jak albumy muzyczne, użytkownicy, recenzje, zamówienia, a także procesy związane z uwierzytelnianiem i autoryzacją użytkowników. API zostało zaprojektowane do współpracy z frontendową częścią aplikacji lub zewnętrznymi systemami integrującymi.</p>
+                        <h3><i class="fa-solid fa-list-check"></i> System umożliwia</h3>
+                        <ul>
+                            <li>Obsługę albumów muzycznych – dodawanie, przeglądanie, aktualizowanie i usuwanie albumów.</li>
+                            <li>Rejestrację i zarządzanie użytkownikami – tworzenie kont, przeglądanie danych użytkowników, edycję, usuwanie i zarządzanie rolami użytkowników.</li>
+                            <li>Zarządzanie zamówieniami – tworzenie zamówień, przeglądanie historii, edytowanie statusów oraz zarządzanie danymi wysyłki.</li>
+                            <li>Moderację recenzji – dodawanie, przeglądanie, edytowanie i usuwanie recenzji użytkowników.</li>
+                            <li>Uwierzytelnianie i autoryzację – umożliwiające logowanie użytkowników oraz kontrolę dostępu na podstawie przypisanej roli (np. administrator, użytkownik).</li>
+                            <li>Wczytywanie danych testowych – szybkie ładowanie przykładowych danych (np. albumów, użytkowników) z plików JSON do bazy danych.</li>
+                            <li>Interaktywną dokumentację – generowaną na podstawie definicji OpenAPI (Swagger), umożliwiającą testowanie endpointów bezpośrednio z poziomu przeglądarki.</li>
+                        </ul>
+                        <h3><i class="fa-solid fa-microchip"></i> Wykorzystane Technologie</h3>
+                        <ul>
+                            <li>Go</li>
+                            <li>GIN</li>
+                            <li>MongoDB</li>
+                            <li>HTML5</li>
+                            <li>CSS3</li>
+                        </ul>
+                    </div>
                 </div>
             </section>
-            <section id="autoryzacja">
-                <h2>Autoryzacja Użytkowników</h2>
-                <div>
-                    <p>System wykorzystuje autoryzację opartą na tokenach JWT (JSON Web Token). Użytkownicy muszą się zalogować, podając prawidłowy adres e-mail i hasło, aby uzyskać token autoryzacyjny, który następnie przesyłają w nagłówkach Authorization podczas wywoływania chronionych endpointów.</p>
-                    <p>Proces autoryzacji:</p>
-                    <ul>
-                        <li>Użytkownik wysyła zapytanie HTTP POST na endpoint /login, podając swoje dane uwierzytelniające (email i hasło).</li>
-                        <li>Serwer weryfikuje dane i w przypadku powodzenia generuje i zwraca token JWT.</li>
-                        <li>Użytkownik używa otrzymanego tokena JWT do uzyskiwania dostępu do zasobów chronionych (np. albumy, zamówienia, recenzje).</li>
-                    </ul>
 
-                    <p>Przykład zapytania logowania:</p>
+            <section id="autoryzacja">
+                <div id="content">
+                    <h2><i class="fa-solid fa-user-shield"></i> Autoryzacja Użytkowników</h2>
+                    <div>
+                        <p>System wykorzystuje autoryzację opartą na tokenach JWT (JSON Web Token). Użytkownicy muszą się zalogować, podając prawidłowy adres e-mail i hasło, aby uzyskać token autoryzacyjny, który następnie przesyłają w nagłówkach Authorization podczas wywoływania chronionych endpointów.</p>
+                        <h3><i class="fa-solid fa-key"></i> Proces autoryzacji</h3>
+                        <ul>
+                            <li>Użytkownik wysyła zapytanie HTTP POST na endpoint /login, podając swoje dane uwierzytelniające (email i hasło).</li>
+                            <li>Serwer weryfikuje dane i w przypadku powodzenia generuje i zwraca token JWT.</li>
+                            <li>Użytkownik używa otrzymanego tokena JWT do uzyskiwania dostępu do zasobów chronionych (np. albumy, zamówienia, recenzje).</li>
+                        </ul>
+
+                        <h3><i class="fa-solid fa-terminal"></i> Przykład zapytania logowania</h3>
                         <pre><code class="json">curl -X 'POST' \
 'http://localhost:25565/login' \
 -H 'accept: application/json' \
@@ -65,169 +115,213 @@
 "email": "user@example.com",
 "password": "strongpassword"}</code></pre>
 
-                    <p>Zawartość zapytania:</p>
+                    <h3><i class="fa-solid fa-envelope-open-text"></i> Zawartość zapytania</h3>
                     <pre><code class="json">{
   "email": "user@example.com",
   "password": "strongpassword"
 }</code></code></pre>
 
-                    <p>Odpowiedź serwera (przykładowy token):</p>
+                    <h3><i class="fa-solid fa-shield-halved"></i> Odpowiedź serwera (przykładowy token)</h3>
                     <pre><code class="json">{
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }</code></code></pre>
-                    <p>Użycie tokena w dalszych zapytaniach:</p>
+                    <h3><i class="fa-solid fa-arrow-right-to-bracket"></i> Użycie tokena w dalszych zapytaniach</h3>
                     <pre><code class="json">Token JWT należy umieszczać w nagłówku Authorization z prefiksem Bearer:
 
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... </code></code></pre>
+                    </div>
                 </div>
             </section>
+
             <section id="endpointy">
-                <h2>Planowane Endpointy</h2>
-                <div>
-                    <p>Uwierzytelnianie:</p>
-                    <ul>
-                        <li>POST /login – logowanie i generowanie tokena JWT</li>
-                    </ul>
-
-                    <p>Obsługa albumów (/albums):</p>
-                    <ul>
-                        <li>GET /albums – pobranie listy albumów</li>
-                        <li>GET /albums/:id – pobranie danych konkretnego albumu</li>
-                        <li>POST /albums – dodanie nowego albumu</li>
-                        <li>POST /albums/bulk – masowe dodanie albumów</li>
-                        <li>PATCH /albums/:id – aktualizacja danych albumu</li>
-                        <li>DELETE /albums/:id – usunięcie albumu</li>
-                    </ul>
-
-                    <p>Obsługa użytkowników (/users):</p>
-                    <ul>
-                        <li>GET /users – pobranie listy użytkowników</li>
-                        <li>GET /users/:id – pobranie danych konkretnego użytkownika</li>
-                        <li>POST /users – utworzenie nowego użytkownika</li>
-                        <li>PATCH /users/:id – aktualizacja danych użytkownika</li>
-                        <li>DELETE /users/:id – usunięcie użytkownika</li>
-                    </ul>
-
-                    <p>Obsługa zamówień (/orders):</p>
-                    <ul>
-                        <li>GET /orders – pobranie wszystkich zamówień</li>
-                        <li>GET /orders/:id – pobranie zamówienia o podanym ID</li>
-                        <li>GET /orders/user/:userID – pobranie zamówień użytkownika o podanym ID</li>
-                        <li>POST /orders – utworzenie nowego zamówienia</li>
-                        <li>PUT /orders/:id – aktualizacja zamówienia</li>
-                        <li>PATCH /orders/:id/status – zmiana statusu zamówienia</li>
-                        <li>PUT /orders/:id/shipping – aktualizacja danych wysyłki zamówienia</li>
-                        <li>DELETE /orders/:id – usunięcie zamówienia</li>
-                    </ul>
-
-                    <p>Obsługa recenzji (/reviews):</p>
-                    <ul>
-                        <li>GET /reviews – pobranie wszystkich recenzji</li>
-                        <li>GET /reviews/:id – pobranie recenzji o podanym ID</li>
-                        <li>GET /reviews/album/:albumID – pobranie recenzji dla danego albumu</li>
-                        <li>GET /reviews/user/:userID – pobranie recenzji użytkownika</li>
-                        <li>POST /reviews – utworzenie nowej recenzji</li>
-                        <li>PUT /reviews/:id – aktualizacja recenzji</li>
-                        <li>DELETE /reviews/:id – usunięcie recenzji</li>
-                    </ul>
-
-                    <p>Dane testowe (/data):</p>
-                    <ul>
-                        <li>POST /data/load – wczytanie danych testowych (np. albumów, użytkowników)</li>
-                    </ul>
-
-                    <p>Dokumentacja (Swagger):</p>
-                    <ul>
-                        <li>GET /swagger/*any – interaktywna dokumentacja REST API</li>
-                    </ul>
-                </div>
-            </section>
-            <section id="model">
-                <h2>Projekt Bazy Danych</h2>
-                <div>
-                    <p>System wykorzystuje MongoDB jako bazę danych NoSQL, która umożliwia elastyczne i szybkie przechowywanie danych w formacie dokumentów BSON (Binary JSON). Poniżej przedstawiono modele danych wykorzystywane w aplikacji.</p>
-                    <p>Kluczowe założenia projektu bazy danych:</p>
+                <div id="content">
+                    <h2><i class="fa-solid fa-network-wired"></i> Planowane Endpointy</h2>
+                    <div>
+                        <h3><i class="fa-solid fa-user-lock"></i> Uwierzytelnianie</h3>
                         <ul>
-                            <li>MongoDB zapewnia elastyczność w przechowywaniu danych o różnej strukturze i rozmiarze.</li>
-                            <li>Dane o albumach, zamówieniach, recenzjach i użytkownikach są przechowywane w osobnych kolekcjach.</li>
-                            <li>Powiązania między kolekcjami realizowane są poprzez referencje (np. UserID, AlbumID).</li>
-                            <li>Dane wrażliwe (hasła) przechowywane są w postaci haszowanej za pomocą algorytmu bcrypt, a nie w postaci jawnej.</li>
+                            <li>POST /login – logowanie i generowanie tokena JWT</li>
                         </ul>
 
-                    <p>Modele danych:</p>
+                        <h3><i class="fa-solid fa-compact-disc"></i> Obsługa albumów (/albums)</h3>
+                        <ul>
+                            <li>GET /albums – pobranie listy albumów</li>
+                            <li>GET /albums/:id – pobranie danych konkretnego albumu</li>
+                            <li>POST /albums – dodanie nowego albumu</li>
+                            <li>POST /albums/bulk – masowe dodanie albumów</li>
+                            <li>PATCH /albums/:id – aktualizacja danych albumu</li>
+                            <li>DELETE /albums/:id – usunięcie albumu</li>
+                        </ul>
 
-                    <p>Album:</p>
-                    <ul>
-                        <li>ID (_id): Unikalny identyfikator albumu.</li>
-                        <li>Title: Tytuł albumu.</li>
-                        <li>Artist: Wykonawca albumu.</li>
-                        <li>Genre: Gatunek muzyczny.</li>
-                        <li>Description: Opcjonalny opis albumu.</li>
-                        <li>ReleaseDate: Data wydania albumu.</li>
-                        <li>Tracks: Lista utworów w albumie.</li>
-                        <li>Price: Cena albumu.</li>
-                        <li>Quantity: Ilość dostępnych egzemplarzy.</li>
-                        <li>CoverURL: URL do okładki albumu.</li>
-                        <li>CreatedAt, UpdatedAt: Daty utworzenia i modyfikacji wpisu.</li>
-                    </ul>
+                        <h3><i class="fa-solid fa-users"></i> Obsługa użytkowników (/users)</h3>
+                        <ul>
+                            <li>GET /users – pobranie listy użytkowników</li>
+                            <li>GET /users/:id – pobranie danych konkretnego użytkownika</li>
+                            <li>POST /users – utworzenie nowego użytkownika</li>
+                            <li>PATCH /users/:id – aktualizacja danych użytkownika</li>
+                            <li>DELETE /users/:id – usunięcie użytkownika</li>
+                        </ul>
 
-                    <p>Order:</p>
-                    <ul>
-                        <li>ID (_id): Unikalny identyfikator zamówienia.</li>
-                        <li>UserID: Identyfikator użytkownika, który złożył zamówienie.</li>
-                        <li>Items: Lista pozycji zamówienia (OrderItem), zawierająca ID albumu, ilość i cenę jednostkową.</li>
-                        <li>Total: Łączna wartość zamówienia.</li>
-                        <li>Status: Status zamówienia (pending, processing, shipped, completed, cancelled).</li>
-                        <li>Shipping: Dane do wysyłki (ShippingDetails).</li>
-                        <li>CreatedAt, UpdatedAt: Daty utworzenia i aktualizacji zamówienia.</li>
-                    </ul>
+                        <h3><i class="fa-solid fa-box"></i> Obsługa zamówień (/orders)</h3>
+                        <ul>
+                            <li>GET /orders – pobranie wszystkich zamówień</li>
+                            <li>GET /orders/:id – pobranie zamówienia o podanym ID</li>
+                            <li>GET /orders/user/:userID – pobranie zamówień użytkownika o podanym ID</li>
+                            <li>POST /orders – utworzenie nowego zamówienia</li>
+                            <li>PUT /orders/:id – aktualizacja zamówienia</li>
+                            <li>PATCH /orders/:id/status – zmiana statusu zamówienia</li>
+                            <li>PUT /orders/:id/shipping – aktualizacja danych wysyłki zamówienia</li>
+                            <li>DELETE /orders/:id – usunięcie zamówienia</li>
+                        </ul>
 
-                    <p>Review:</p>
-                    <ul>
-                        <li>ID (_id): Unikalny identyfikator recenzji.</li>
-                        <li>AlbumID: ID albumu, którego dotyczy recenzja.</li>
-                        <li>UserID: ID użytkownika wystawiającego recenzję.</li>
-                        <li>Rating: Ocena albumu w skali (np. 1-5).</li>
-                        <li>Comment: Komentarz do recenzji.</li>
-                        <li>CreatedAt: Data utworzenia recenzji.</li>
-                    </ul>
+                        <h3><i class="fa-solid fa-star"></i> Obsługa recenzji (/reviews)</h3>
+                        <ul>
+                            <li>GET /reviews – pobranie wszystkich recenzji</li>
+                            <li>GET /reviews/:id – pobranie recenzji o podanym ID</li>
+                            <li>GET /reviews/album/:albumID – pobranie recenzji dla danego albumu</li>
+                            <li>GET /reviews/user/:userID – pobranie recenzji użytkownika</li>
+                            <li>POST /reviews – utworzenie nowej recenzji</li>
+                            <li>PUT /reviews/:id – aktualizacja recenzji</li>
+                            <li>DELETE /reviews/:id – usunięcie recenzji</li>
+                        </ul>
 
-                    <p>User:</p>
-                    <ul>
-                        <li>ID (_id): Unikalny identyfikator użytkownika.</li>
-                        <li>FirstName, LastName: Imię i nazwisko użytkownika.</li>
-                        <li>Email: Adres e-mail użytkownika.</li>
-                        <li>PhoneNumber: Numer telefonu.</li>
-                        <li>PasswordHash: Zabezpieczony hash hasła użytkownika (pole Password używane tylko przy tworzeniu).</li>
-                        <li>Role: Rola użytkownika (np. admin, customer, employee).</li>
-                        <li>IsActive: Status aktywności konta.</li>
-                        <li>ShippingDetails: Dane adresowe użytkownika (ShippingDetails).</li>
-                        <li>CreatedAt, UpdatedAt: Daty utworzenia i aktualizacji konta.</li>
-                    </ul>
+                        <h3><i class="fa-solid fa-database"></i> Dane testowe (/data)</h3>
+                        <ul>
+                            <li>POST /data/load – wczytanie danych testowych (np. albumów, użytkowników)</li>
+                        </ul>
 
-                    <p>ShippingDetails:</p>
-                    <ul>
-                        <li>Address: Adres dostawy.</li>
-                        <li>City: Miasto dostawy.</li>
-                        <li>PostalCode: Kod pocztowy.</li>
-                        <li>Country: Kraj dostawy.</li>
-                        <li>PhoneNumber: Numer telefonu kontaktowego.</li>
-                    </ul>
+                        <h3><i class="fa-solid fa-book"></i> Dokumentacja (Swagger)</h3>
+                        <ul>
+                            <li>GET /swagger/*any – interaktywna dokumentacja REST API</li>
+                        </ul>
+                    </div>
                 </div>
             </section>
+
+            <section id="model">
+                <div id="content">
+                    <h2><i class="fa-solid fa-database"></i> Projekt Bazy Danych</h2>
+                    <div>
+                        <p>System wykorzystuje MongoDB jako bazę danych NoSQL, która umożliwia elastyczne i szybkie przechowywanie danych w formacie dokumentów BSON (Binary JSON). Poniżej przedstawiono modele danych wykorzystywane w aplikacji.</p>
+                        <h3><i class="fa-solid fa-lightbulb"></i> Kluczowe założenia projektu bazy danych</h3>
+                            <ul>
+                                <li>MongoDB zapewnia elastyczność w przechowywaniu danych o różnej strukturze i rozmiarze.</li>
+                                <li>Dane o albumach, zamówieniach, recenzjach i użytkownikach są przechowywane w osobnych kolekcjach.</li>
+                                <li>Powiązania między kolekcjami realizowane są poprzez referencje (np. UserID, AlbumID).</li>
+                                <li>Dane wrażliwe (hasła) przechowywane są w postaci haszowanej za pomocą algorytmu bcrypt, a nie w postaci jawnej.</li>
+                            </ul>
+
+                        <h2><i class="fa-solid fa-table-list"></i> Modele danych</h2>
+
+                        <h3><i class="fa-solid fa-compact-disc"></i> "Album"</h3>
+                        <ul>
+                            <li>ID (_id): Unikalny identyfikator albumu.</li>
+                            <li>Title: Tytuł albumu.</li>
+                            <li>Artist: Wykonawca albumu.</li>
+                            <li>Genre: Gatunek muzyczny.</li>
+                            <li>Description: Opcjonalny opis albumu.</li>
+                            <li>ReleaseDate: Data wydania albumu.</li>
+                            <li>Tracks: Lista utworów w albumie.</li>
+                            <li>Price: Cena albumu.</li>
+                            <li>Quantity: Ilość dostępnych egzemplarzy.</li>
+                            <li>CoverURL: URL do okładki albumu.</li>
+                            <li>CreatedAt, UpdatedAt: Daty utworzenia i modyfikacji wpisu.</li>
+                        </ul>
+
+                        <h3><i class="fa-solid fa-box"></i> "Order"</h3>
+                        <ul>
+                            <li>ID (_id): Unikalny identyfikator zamówienia.</li>
+                            <li>UserID: Identyfikator użytkownika, który złożył zamówienie.</li>
+                            <li>Items: Lista pozycji zamówienia (OrderItem), zawierająca ID albumu, ilość i cenę jednostkową.</li>
+                            <li>Total: Łączna wartość zamówienia.</li>
+                            <li>Status: Status zamówienia (pending, processing, shipped, completed, cancelled).</li>
+                            <li>Shipping: Dane do wysyłki (ShippingDetails).</li>
+                            <li>CreatedAt, UpdatedAt: Daty utworzenia i aktualizacji zamówienia.</li>
+                        </ul>
+
+                        <h3><i class="fa-solid fa-star"></i> "Review"</h3>
+                        <ul>
+                            <li>ID (_id): Unikalny identyfikator recenzji.</li>
+                            <li>AlbumID: ID albumu, którego dotyczy recenzja.</li>
+                            <li>UserID: ID użytkownika wystawiającego recenzję.</li>
+                            <li>Rating: Ocena albumu w skali (np. 1-5).</li>
+                            <li>Comment: Komentarz do recenzji.</li>
+                            <li>CreatedAt: Data utworzenia recenzji.</li>
+                        </ul>
+
+                        <h3><i class="fa-solid fa-user"></i> "User"</h3>
+                        <ul>
+                            <li>ID (_id): Unikalny identyfikator użytkownika.</li>
+                            <li>FirstName, LastName: Imię i nazwisko użytkownika.</li>
+                            <li>Email: Adres e-mail użytkownika.</li>
+                            <li>PhoneNumber: Numer telefonu.</li>
+                            <li>PasswordHash: Zabezpieczony hash hasła użytkownika (pole Password używane tylko przy tworzeniu).</li>
+                            <li>Role: Rola użytkownika (np. admin, customer, employee).</li>
+                            <li>IsActive: Status aktywności konta.</li>
+                            <li>ShippingDetails: Dane adresowe użytkownika (ShippingDetails).</li>
+                            <li>CreatedAt, UpdatedAt: Daty utworzenia i aktualizacji konta.</li>
+                        </ul>
+
+                        <h3><i class="fa-solid fa-truck"></i> "ShippingDetails"</h3>
+                        <ul>
+                            <li>Address: Adres dostawy.</li>
+                            <li>City: Miasto dostawy.</li>
+                            <li>PostalCode: Kod pocztowy.</li>
+                            <li>Country: Kraj dostawy.</li>
+                            <li>PhoneNumber: Numer telefonu kontaktowego.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
             <section id="iframe">
-                <h2>Swagger</h2> 
-                <div>
-                    <iframe src="/swagger/index.html"></iframe>
+                <div id="content">
+                    <h2><i class="fa-solid fa-book"></i> Swagger</h2> 
+                    <div>
+                        <iframe src="/swagger/index.html"></iframe>
+                    </div>
                 </div>
             </section>
         </main>
+
         <footer>
-              <p>© 2025 Music Store API</p>
-                <p>API version 1.0 — Backend Sklepu Muzycznego</p>
-                <p>Kontakt: <a href="mailto:support@example.com">support@example.com</a></p>
-                <p><a href="http://example.com/terms/">Regulamin</a> | <a href="https://opensource.org/licenses/MIT">Licencja MIT</a></p>
-                <p><a href="/swagger/index.html">Dokumentacja API (Swagger UI)</a></p>
+            <h3>Dokumentacja</h3>
+            <nav>
+                <a href="https://example.com/" role="button">Repozytorium GitHub</a>
+                <a href="/swagger/index.html" role="button">Dokumentacja API (Swagger UI)</a>
+                <a href="https://example.com/" role="button">Licencja projektu</a>
+                <a href="https://example.com/" role="button">Status wersji</a>
+            </nav>
+            <h3>Kontakt</h3>
+            <nav>
+                <a href="https://example.com/" role="button">Formularz feedbacku</a>
+                <a href="mailto:support@example.com" role="button">support@example.com</a>
+            </nav>
+            <h3>Udostępnij projekt</h3>
+            <div class="social-buttons">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://spotitools.app" target="_blank" title="Udostępnij na Facebooku">
+                <i class="fab fa-facebook-square"></i>
+                </a>
+                <a href="https://twitter.com/intent/tweet?text=Sprawdź%20SpotiTools!%20https://spotitools.app" target="_blank" title="Udostępnij na X/Twitter">
+                <i class="fab fa-x-twitter"></i>
+                </a>
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://spotitools.app&title=SpotiTools" target="_blank" title="Udostępnij na LinkedIn">
+                <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://t.me/share/url?url=https://spotitools.app&text=SpotiTools%20-%20Twoje%20muzyczne%20centrum%20kontroli" target="_blank" title="Udostępnij na Telegramie">
+                <i class="fab fa-telegram"></i>
+                </a>
+                <a href="mailto:?subject=SpotiTools&body=Zobacz%20to!%20https://spotitools.app" title="Udostępnij e-mailem">
+                <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+            <p>&copy; 2025 Music Store API. Projekt demonstracyjny. API version 2.0 — Backend Sklepu Muzycznego</p>
         </footer>
+
+        <audio id="bg-music" loop preload="auto">
+            <source src="/static/GTA Vice City - Introduction Theme [REMASTERED & EXTENDED].mp3" type="audio/mpeg">
+            Twoja przeglądarka nie obsługuje elementu audio.
+        </audio>
+
+        <div id="particles"></div>
     </body>
 </html>
